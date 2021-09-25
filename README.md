@@ -1,6 +1,11 @@
 # Algo_Signals
 Users choose a market product to track, then choose a model to fit its historical trade data. 
 
+<<<<<<< HEAD
+- Run create_csv.py
+    - This step requires the yfinance package to be installed
+    - It will take about 1 hour to run
+=======
 
 # The Four Headless Horseman
 
@@ -48,3 +53,4 @@ Users choose a market product to track, then choose a model to fit its historica
 ## Show all available metrics
 - Allow the user to determine if they would like to Deploy the algo that was created, and/or restart at the beginning and build another algo
 
+>>>>>>> 161ae1dd0eb02c1e140d351f448f6d10e2249d7c
