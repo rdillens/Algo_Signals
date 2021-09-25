@@ -1,3 +1,15 @@
+# Data files
+.csv
+.db
+
+# Environment Variables for API Keys
+.env
+
+# Shelf Files
+.bat
+.bak
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
