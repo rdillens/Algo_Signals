@@ -1,13 +1,13 @@
 # Data files
-.csv
-.db
+*.csv
+*.db
 
 # Environment Variables for API Keys
 .env
 
 # Shelf Files
-.bat
-.bak
+*.bat
+*.bak
 
 
 # Byte-compiled / optimized / DLL files
