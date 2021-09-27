@@ -6,9 +6,9 @@
 .env
 
 # Shelf Files
-*.bat
+*.dat
 *.bak
-
+*.dir
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
