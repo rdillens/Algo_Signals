@@ -10,6 +10,8 @@ if type(finnhub_api_key) == str:
     print('API OK')
 else:
     print('API NOT OK', type(finnhub_api_key))
+    print('Check your .env file for the FINNHUB_API_KEY value.')
+    print('Sign-up and get an API key at https://finnhub.io/')
 
 # Setup client
 finnhub_client = finnhub.Client(api_key=finnhub_api_key)
@@ -26,7 +28,7 @@ for market in markets:
 for exchange in crypto_exchange_list:
     tickers['crypto'][exchange] = finnhub_client.crypto_symbols(exchange)
     print(tickers['crypto'][exchange])
-    
+
 # # Crypto symbols
 # symbols = finnhub_client.crypto_symbols('BINANCE')
 # print(type(symbols))
