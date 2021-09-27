@@ -20,6 +20,16 @@ finnhub_client = finnhub.Client(api_key=finnhub_api_key)
 # print(finnhub_client.crypto_exchanges())
 crypto_exchange_list = finnhub_client.crypto_exchanges()
 
+stock_list = finnhub_client.stock_symbols('US')
+stocks_df = pd.DataFrame(stock_list)
+
+
+def get_crypto_tickers(exchange):
+    return finnhub_client.crypto_symbols(exchange)
+
+def get_stock_tickers(exchange='US'):
+    return finnhub_client.stock_symbols(exchange=exchange)
+
 # tickers = {}
 # markets = ['crypto', 'stock']
 # for market in markets:
