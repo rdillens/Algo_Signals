@@ -6,28 +6,33 @@ def main(display_string=None):
     if display_string is not None:
         print(display_string)
 
-    sh = shelve.open('../Resources/shelf')
-
     username = questionary.text("What is your name?").ask()
 
-    if username in sh:
-        message = f"Hello, {username}!"
-    else:
-        sh[username] = {}
-        message = f"It's nice to meet you, {username}!"
-    print(message)
+    with shelve.open('../Resources/shelf') as sh:
+        if username in sh:
+            message = f"Hello, {username}!"
+        else:
+            sh[username] = {}
+            message = f"It's nice to meet you, {username}!"
+            sh.sync()
+        print(message)
 
-    if 'portfolio' in sh[username]:
-        print('Nice portfolio!')
-    else:
-        sh[username] = {
-            'portfolio': pb.default_portfolio
-            }
-        print('You need to invest, homie!', pb.default_portfolio)
-        # sh[username]['portfolio'] = pb.default_portfolio
+        if 'portfolio' in sh[username]:
+            print('Nice portfolio!', sh[username]['portfolio'])
+            if not questionary.confirm("Do you want to keep it?").ask():
+                sh[username] = pb.build_portfolio(sh[username])
+                sh.sync()
 
-    print(f"{sh[username]['portfolio']}")
-    sh.sync()
+        else:
+            # sh[username] = {
+            #     'portfolio': [],
+            #     }
+            print('You need to invest, homie!')
+            sh[username] = pb.build_portfolio(sh[username])
+            sh.sync()
+
+        print(f"{sh[username]['portfolio']}")
+    # sh.sync()
     return username
 
 if __name__ == "__main__":
