@@ -20,19 +20,15 @@ def main(display_string=None):
         if 'portfolio' in sh[username]:
             print('Nice portfolio!', sh[username]['portfolio'])
             if not questionary.confirm("Do you want to keep it?").ask():
-                sh[username] = pb.build_portfolio(sh[username])
+                sh[username] = pb.init_portfolio(sh[username])
                 sh.sync()
 
         else:
-            # sh[username] = {
-            #     'portfolio': [],
-            #     }
             print('You need to invest, homie!')
-            sh[username] = pb.build_portfolio(sh[username])
+            sh[username] = pb.init_portfolio(sh[username])
             sh.sync()
 
         print(f"{sh[username]['portfolio']}")
-    # sh.sync()
     return username
 
 if __name__ == "__main__":
