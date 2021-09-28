@@ -16,6 +16,8 @@ def build_portfolio(dict):
             exchange = choose_crypto_exchange()
             product_dict['exchange'] = exchange
             ticker_list = fh.get_crypto_tickers(exchange=exchange)
+            print(len(ticker_list))
+
             ticker_df = pd.DataFrame(ticker_list)
             ticker_df['baseCurrency'] = ticker_df['displaySymbol'].apply(lambda x: x[x.find('/')+1:])
             ticker_df['quoteCurrency'] = ticker_df['displaySymbol'].apply(lambda x: x[:x.find('/')])
@@ -28,14 +30,22 @@ def build_portfolio(dict):
         # Add stock market item to portfolio
         if market == 'stock':
             product_dict['exchange'] = 'US'
+            print(fh.stocks_df.head())
             stock_type = questionary.select(
                 "What type of stock?",
                 choices=fh.stocks_df['type'].unique()
             ).ask()
+            print(f"Selected: {stock_type}")
 
+            # Filter stocks by type
+            # stock_choices=fh.stocks_df.loc[lambda df: df['type'] == stock_type]['symbol'],
+            stock_choices=fh.stocks_df.loc[lambda df: df['type'] == stock_type]['symbol']
+            print(stock_choices)
+            # stocks_list = fh.stocks_df['symbol'].unique()
+            print(len(stock_choices))
             ticker = questionary.select(
                 "What symbol?",
-                choices=fh.stocks_df['symbol'].unique(),
+                choices=stock_choices,
             ).ask()
             product_dict['ticker'] = ticker
             print(ticker)
