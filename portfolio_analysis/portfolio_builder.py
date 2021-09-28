@@ -1,6 +1,8 @@
 import questionary
 import finnhubIO as fh
+import polygonIO as pg
 import pandas as pd
+import concurrent.futures
 
 
 market_list = ['stock', 'crypto']
@@ -43,6 +45,7 @@ def build_portfolio(dict):
             print(stock_choices)
             # stocks_list = fh.stocks_df['symbol'].unique()
             print(len(stock_choices))
+            stock_df = analyze_stocks(stock_choices)
             ticker = questionary.select(
                 "What symbol?",
                 choices=stock_choices,
@@ -53,6 +56,52 @@ def build_portfolio(dict):
 
     return dict
 
+
+def analyze_stocks(stocks):
+    print("Analyzing...")
+    stock_df = pd.DataFrame(stocks).reset_index(drop=True)
+    print(stock_df.head())
+
+    market_cap_dict = {}
+    exception_count = 0
+    cap_count = 0
+    exception_list = []
+    key_error_list = []
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_mkt_cap = {executor.submit(get_stock_market_cap, stock): stock for stock in stocks[:100]}
+        for future in concurrent.futures.as_completed(future_to_mkt_cap):
+            stock = future_to_mkt_cap[future]
+    #         print(stock, future.result())
+            try:
+                market_cap_dict[stock] = future.result()
+                cap_count += 1
+            except KeyError:
+                key_error_list.append(stock)
+            except Exception as exc:
+                exception_count += 1
+                exception_list.append(stock)
+                print(f'\n{stock} generated a {type(exc)} exception: {exc}', end='\n')
+            else:
+                print(f'\r{stock}: {market_cap_dict[stock]}', end='')
+        print(f'\rDone! {cap_count} stocks, {len(key_error_list)} key errors, {exception_count} unhandled exceptions.')
+        print(f'Tickers with no market cap data:\n{key_error_list}')
+
+
+    return stock_df
+
+def get_stock_market_cap(stock):
+#     print(f'\rGetting {stock} ticker...', end='')
+    # ticker = yf.Ticker(stock)
+    financials = pg.get_stock_financials(stock)
+
+    # financials = fh.get_stock_basic_financials(stock)
+    # profile = fh.get_stock_company_profile(stock)
+    # print(financials)
+    # return ticker.info['marketCap']
+    return financials
+      
 
 def choose_crypto(ticker_df):
     base_currency = questionary.select(

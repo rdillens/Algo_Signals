@@ -60,6 +60,9 @@ def get_stock_tickers(exchange='US'):
 
 # # Basic financials
 # print(finnhub_client.company_basic_financials('AAPL', 'all'))
+def get_stock_basic_financials(symbol):
+    return finnhub_client.company_basic_financials(symbol, 'all')
+
 
 # # Earnings surprises
 # print(finnhub_client.company_earnings('TSLA', limit=5))
@@ -81,6 +84,8 @@ def get_stock_tickers(exchange='US'):
 # print(finnhub_client.company_profile(symbol='AAPL'))
 # print(finnhub_client.company_profile(isin='US0378331005'))
 # print(finnhub_client.company_profile(cusip='037833100'))
+def get_stock_company_profile(symbol):
+    return finnhub_client.company_profile(symbol=symbol)
 
 # # Company Profile 2
 # print(finnhub_client.company_profile2(symbol='AAPL'))
