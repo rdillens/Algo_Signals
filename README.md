@@ -14,7 +14,13 @@ Users choose a market product to track, then choose a model to fit its historica
 ## Stock / Crypto Screener (@Remy D initial design)
 - Allow the user to select which market they want to choose (stocks, or crypto currency)
 - Once the market is selected we will screen the market to come up with the most volatile stocks/cryptos for each trading day to put through the algo
-
+- Choosing stock screener to filter stocks by: 
+    1. 20% premarket gain 
+    2. 3x relative volume over the last 10 days
+    3. Breaking news or news article 
+    4. Number of outstanding shares (small, mid or large cap stocks)
+    5. Call/Put ratio (maybe?)
+    6. Market sentiment (stocks in the market gaining vs losing)
 
 ## Determine what is classified as a "winning trade" for the buy / sell in our historical dataset
 - Are we looking for short term trades that exceed the fees we would pay to take the trade? aka anything that is remotely profitable
