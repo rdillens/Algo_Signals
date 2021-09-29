@@ -7,7 +7,7 @@ import json
 load_dotenv()
 finnhub_api_key = os.getenv("FINNHUB_API_KEY")
 if type(finnhub_api_key) == str:
-    print('API OK')
+    print('Finnhub API OK')
 else:
     print('API NOT OK', type(finnhub_api_key))
     print('Check your .env file for the FINNHUB_API_KEY value.')
@@ -45,6 +45,11 @@ def get_stock_tickers(exchange='US'):
 # for symbol in symbols:
 #     print(symbol)
 
+def get_stock_candles(stock, dt_start, dt_end, resolution='D'):
+    print(f"Getting {stock }candles from {dt_start} to {dt_end}")
+    # Supported resolutions: 1, 5, 15, 30, 60, D, W, M 
+
+    return finnhub_client.stock_candles(stock, resolution, dt_start, dt_end)
 
 
 

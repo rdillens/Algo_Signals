@@ -10,7 +10,7 @@ from polygon import RESTClient
 load_dotenv()
 polygon_api_key = os.getenv("POLYGON_API_KEY")
 if type(polygon_api_key) == str:
-    print('API OK')
+    print('Polygon API OK')
 else:
     print('API NOT OK', type(polygon_api_key))
     print('Check your .env file for the POLYGON_API_KEY value.')

@@ -1,26 +1,17 @@
 import shelve
 import questionary
 import portfolio_builder as pb
+import helpful_methods as hm
 
 def main(display_string=None):
     if display_string is not None:
         print(display_string)
 
     # Get username
-    username = questionary.text("What is your name?").ask()
+    username = hm.get_username()
 
     # Open shelf to access persistent data
     with shelve.open('../Resources/shelf') as sh:
-        # Check to see if username exists in shelf
-        if username in sh:
-            message = f"Hello, {username}!"
-        # If username does not exist, create empty dictionary
-        else:
-            sh[username] = {}
-            message = f"It's nice to meet you, {username}!"
-            sh.sync()
-        print(message)
-        # Check to see if portfolio exists in shelf
         if 'portfolio' in sh[username]:
             print('Nice portfolio!', sh[username]['portfolio'])
             if not questionary.confirm("Do you want to keep it?").ask():
