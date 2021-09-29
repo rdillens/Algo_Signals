@@ -17,8 +17,7 @@ def index():
             stocks[row[0]] = {'industry': row[2]}
     print(stocks)
     if pattern: 
-        datafiles = os.listdir('datasets/daily')
-        for filename in datafiles: 
+        for filename in os.listdir('datasets/daily'): 
             df = pd.read_csv('datasets/daily/{}'.format(filename))
             pattern_function = getattr(talib, pattern)
             symbol = filename.split('.')[0]
