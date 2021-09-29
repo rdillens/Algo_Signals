@@ -7,7 +7,7 @@ import json
 load_dotenv()
 finnhub_api_key = os.getenv("FINNHUB_API_KEY")
 if type(finnhub_api_key) == str:
-    print('API OK')
+    print('Finnhub API OK')
 else:
     print('API NOT OK', type(finnhub_api_key))
     print('Check your .env file for the FINNHUB_API_KEY value.')
@@ -45,21 +45,24 @@ def get_stock_tickers(exchange='US'):
 # for symbol in symbols:
 #     print(symbol)
 
-
-
-
 # Stock candles
-# res = finnhub_client.stock_candles('AAPL', 'D', 1590988249, 1591852249)
-# print(res)
+def get_stock_candles(stock, dt_start, dt_end, resolution='D'):
+    # res = finnhub_client.stock_candles('AAPL', 'D', 1590988249, 1591852249)
+    # print(res)
+    print(f"Getting {stock }candles from {dt_start} to {dt_end}")
+    # Supported resolutions: 1, 5, 15, 30, 60, D, W, M 
 
-#Convert to Pandas Dataframe
-# print(pd.DataFrame(res))
+    return finnhub_client.stock_candles(stock, resolution, dt_start, dt_end)
+
 
 # # Aggregate Indicators
 # print(finnhub_client.aggregate_indicator('AAPL', 'D'))
 
 # # Basic financials
 # print(finnhub_client.company_basic_financials('AAPL', 'all'))
+def get_stock_basic_financials(symbol):
+    return finnhub_client.company_basic_financials(symbol, 'all')
+
 
 # # Earnings surprises
 # print(finnhub_client.company_earnings('TSLA', limit=5))
@@ -81,6 +84,8 @@ def get_stock_tickers(exchange='US'):
 # print(finnhub_client.company_profile(symbol='AAPL'))
 # print(finnhub_client.company_profile(isin='US0378331005'))
 # print(finnhub_client.company_profile(cusip='037833100'))
+def get_stock_company_profile(symbol):
+    return finnhub_client.company_profile(symbol=symbol)
 
 # # Company Profile 2
 # print(finnhub_client.company_profile2(symbol='AAPL'))
@@ -256,4 +261,3 @@ def get_stock_tickers(exchange='US'):
 
 # # Company ESG
 # print(finnhub_client.company_esg_score("AAPL"))
-
