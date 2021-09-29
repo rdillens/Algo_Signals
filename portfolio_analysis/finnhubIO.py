@@ -45,20 +45,15 @@ def get_stock_tickers(exchange='US'):
 # for symbol in symbols:
 #     print(symbol)
 
+# Stock candles
 def get_stock_candles(stock, dt_start, dt_end, resolution='D'):
+    # res = finnhub_client.stock_candles('AAPL', 'D', 1590988249, 1591852249)
+    # print(res)
     print(f"Getting {stock }candles from {dt_start} to {dt_end}")
     # Supported resolutions: 1, 5, 15, 30, 60, D, W, M 
 
     return finnhub_client.stock_candles(stock, resolution, dt_start, dt_end)
 
-
-
-# Stock candles
-# res = finnhub_client.stock_candles('AAPL', 'D', 1590988249, 1591852249)
-# print(res)
-
-#Convert to Pandas Dataframe
-# print(pd.DataFrame(res))
 
 # # Aggregate Indicators
 # print(finnhub_client.aggregate_indicator('AAPL', 'D'))
@@ -266,4 +261,3 @@ def get_stock_company_profile(symbol):
 
 # # Company ESG
 # print(finnhub_client.company_esg_score("AAPL"))
-

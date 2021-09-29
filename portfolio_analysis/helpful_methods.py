@@ -1,6 +1,23 @@
 import questionary
 import shelve
+import pandas as pd
 
+
+# Create a temporary SQLite database and populate the database with content from the etf.db seed file
+database_connection_string = 'sqlite:///../Resources/portfolio.db'
+
+
+def gen_df(
+    table_name,
+    engine,
+):
+    df = pd.read_sql_table(
+        table_name,
+        con=engine,
+        index_col='Time',
+        parse_dates=True,
+    )
+    return df
 
 def get_username():
     username = questionary.text("What is your name?").ask()
