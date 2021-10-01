@@ -1,13 +1,14 @@
 from datetime import datetime
-from logging import info
-from multiprocessing import Value
-from os import symlink
+# from logging import info
+# from multiprocessing import Value
+# from os import symlink
 import questionary
 import shelve
 import pandas as pd
+import sqlalchemy
 # from pathlib import Path
 import remy_workflow.finnhubIO as fh
-from time import sleep
+# from time import sleep
 import yfinance as yf
 import concurrent.futures
 
@@ -171,12 +172,18 @@ def gen_crypto_df(exchange=None):
     return df
 
 
-def get_market_info(df, market, exchange, product_type):
-    df = pd.DataFrame(df)
-    sleep_time = 1.0/10.0
-    time_start = datetime.now()
+def get_market_info(df, market, exchange, product_type, engine):
+    inspector = sqlalchemy.inspect(engine)
+    table_names = inspector.get_table_names()
+    if table_names:
+        df = pd.read_sql_table(table_names[0], con=engine)
+        print(f"Loaded db {len(df)} items")
+    # else:
+    #     df = pd.DataFrame(df)
+    # sleep_time = 1.0/10.0
     # print(market, type(market))
     if market == 'stock':
+        time_start = datetime.now()
         # df.set_index('symbol', inplace=True)
         print(f'Found {len(df)}')
         symbol_list = list(df['symbol'])
@@ -185,9 +192,9 @@ def get_market_info(df, market, exchange, product_type):
         sliced_symbol_list = symbol_list[:search_limit]
         df = get_threaded_info(sliced_symbol_list, df).copy()
 
-    run_time = datetime.now() - time_start
-    estimated_total_run_time = len(symbol_list) * (run_time.total_seconds()/search_limit) / 60
-    print(f"Time to run: {run_time}\nEstimated time to run entire market: {estimated_total_run_time} minutes.")
+        run_time = datetime.now() - time_start
+        estimated_total_run_time = len(symbol_list) * (run_time.total_seconds()/search_limit) / 60
+        print(f"Time to run: {run_time}\nEstimated time to run entire market: {estimated_total_run_time} minutes.")
     return df
 
 
@@ -252,4 +259,64 @@ def get_stock_market_cap(stock):
 #     print(f'\rGetting {stock} ticker...', end='')
     ticker = yf.Ticker(stock)
     return ticker.info['marketCap']
+
+def process_ticker_info(ticker):
+    print(ticker)
+    stock_info = get_stock_info(ticker)
+    stock_info_list = list(stock_info.items())
+    product_df = pd.DataFrame(stock_info_list, columns=['Info', ticker])
+    product_df = product_df.set_index("Info")
+    # product_df = product_df.T
+    drop_rows = ['zip', 'sector', 'fullTimeEmployees', 'longBusinessSummary', 'city', 'phone', 'state', 'country', 'companyOfficers', 'website', 'maxAge', 'address1', 'address2', 'industry', 'logo_url', 'tradeable', 'fromCurrency', ]        
+    # print(product_df.index)
+    for row in drop_rows:
+        if row in product_df.index:
+            product_df = product_df.drop(index=row)
+    # print(product_df.head(20))
+    # print(product_df.tail(20))
+
+    return product_df
+
+
+def process_ticker_hist(ticker):
+    candle_df = yf.download(ticker, period="max")
+    print(candle_df.head())
+    candle_df.rename_axis('Datetime', inplace=True)
+    candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
+    return candle_df
       
+def get_minute_candles(ticker):
+    current_time = int(round(datetime.now().timestamp(),0))
+    print(datetime.fromtimestamp(current_time))
+    max_offset = 86400 * 10 * 365
+    dt_end = current_time
+    dt_start = dt_end - max_offset
+    candles = fh.get_stock_candles(
+        ticker, 
+        dt_start=dt_start, 
+        dt_end=dt_end, 
+        resolution='1'
+        )
+    # This is causing an error
+    try:
+        candle_df = pd.DataFrame(candles)
+    except Exception as e:
+        print(f'Error: {e} {type(e)}')
+        raise e
+    candle_df.rename(
+        columns={
+            't': 'Datetime', 
+            'c': 'Close', 
+            'h': 'High', 
+            'l': 'Low', 
+            'o': 'Open', 
+            's': 'Status', 
+            'v': 'Volume',
+            },
+        inplace=True,
+        )
+    candle_df['Datetime'] = candle_df['Datetime'].apply(lambda df: datetime.fromtimestamp(df))
+    candle_df.set_index('Datetime', inplace=True, drop=True)
+    # print(candle_df)
+    candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
+    return candle_df
