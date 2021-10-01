@@ -53,7 +53,7 @@ def get_username(username=None):
 
 
 def choose_market():
-    default_market = 'crypto'
+    default_market = 'stock'
     if default_market in market_list:
         market = questionary.select(
             "What market are you looking at?",
