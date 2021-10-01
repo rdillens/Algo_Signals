@@ -1,8 +1,15 @@
+from datetime import datetime
+from logging import info
+from multiprocessing import Value
+from os import symlink
 import questionary
 import shelve
 import pandas as pd
-from pathlib import Path
+# from pathlib import Path
 import remy_workflow.finnhubIO as fh
+from time import sleep
+import yfinance as yf
+import concurrent.futures
 
 
 # Create a temporary SQLite database and populate the database with content from the etf.db seed file
@@ -164,13 +171,85 @@ def gen_crypto_df(exchange=None):
     return df
 
 
-def get_market_info(df):
-    for item in df:
-        info = get_product_info(item)
-        # print(f'{item}', info)
+def get_market_info(df, market, exchange, product_type):
+    df = pd.DataFrame(df)
+    sleep_time = 1.0/10.0
+    time_start = datetime.now()
+    # print(market, type(market))
+    if market == 'stock':
+        # df.set_index('symbol', inplace=True)
+        print(f'Found {len(df)}')
+        symbol_list = list(df['symbol'])
+
+        search_limit = 10
+        sliced_symbol_list = symbol_list[:search_limit]
+        df = get_threaded_info(sliced_symbol_list, df).copy()
+
+    run_time = datetime.now() - time_start
+    estimated_total_run_time = len(symbol_list) * (run_time.total_seconds()/search_limit) / 60
+    print(f"Time to run: {run_time}\nEstimated time to run entire market: {estimated_total_run_time} minutes.")
     return df
 
 
-def get_product_info(symbol):
-    prod_dict = {}
-    return prod_dict
+def get_product_info(symbol, market, exchange, product_type):
+    print(f"Getting info for {symbol} {market} {exchange} {product_type}")
+    if market=='stock':
+        ticker = yf.Ticker(symbol)
+        print(ticker.info)
+        # return fh.finnhub_client.aggregate_indicator(symbol, 'D')
+    return {}
+
+def get_threaded_info(stocks, df):
+    exception_count = 0
+    cap_count = 0
+    exception_list = []
+    key_error_list = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_dict = {executor.submit(get_stock_info, stock): stock for stock in stocks}
+        for future in concurrent.futures.as_completed(future_to_dict):
+            stock = future_to_dict[future]
+            try:
+                info = future.result()
+
+                for k, v in info.items():
+                    if k not in df.columns:
+                        df[k] = pd.NA
+                    try:
+                        df[k].loc[df['symbol'] == stock] = v
+                    except ValueError:
+                        df[k].loc[df['symbol'] == stock] = pd.NA
+                    except Exception as e:
+                        print(stock, k, v, type(e), e)
+                        exception_count += 1
+
+                cap_count += 1
+            except KeyError:
+                key_error_list.append(stock)
+            except Exception as exc:
+                exception_count += 1
+                exception_list.append(stock)
+                print(f'\n{stock} generated a {type(exc)} exception: {exc}', end='\n')
+            else:
+                pass
+                print(f"\r{stock:<6s}", end="")
+        print(f'\rDone! {cap_count} stocks, {len(key_error_list)} key errors, {exception_count} unhandled exceptions.')
+        print(f'Tickers with no market cap data:\n{key_error_list}')
+    # return info_dict
+    return df
+
+
+def get_stock_info(stock):
+    try:
+        ticker = yf.Ticker(stock)
+    except Exception as e:
+        print(f"{e}")
+        return e
+    return ticker.info
+
+
+def get_stock_market_cap(stock):
+#     print(f'\rGetting {stock} ticker...', end='')
+    ticker = yf.Ticker(stock)
+    return ticker.info['marketCap']
+      
