@@ -46,7 +46,13 @@ def analyze_asset(asset):
         dt_end=dt_end, 
         resolution='1'
         )
-    candle_df = pd.DataFrame(candles)
+    print(candles)
+    # This is causing an error
+    try:
+        candle_df = pd.DataFrame(candles)
+    except Exception as e:
+        print(f'Error: {e} {type(e)}')
+        raise e
     candle_df.rename(
         columns={
             't': 'Time', 
