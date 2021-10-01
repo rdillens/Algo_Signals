@@ -5,6 +5,16 @@ import fire
 from remy_workflow.yfinance_ticker_cols import (col_list, scan_col_list)
 import pandas as pd
 import sqlalchemy
+from pathlib import Path
+import os
+
+path = Path("./Resources")
+if os.path.isdir(path):
+    print('Yes')
+else: 
+    os.makedirs(path)
+    print('No')
+
 db_connection_string = 'sqlite:///./Resources/products.db'
 
 engine  = sqlalchemy.create_engine(db_connection_string)
