@@ -1,14 +1,9 @@
 from datetime import datetime
-# from logging import info
-# from multiprocessing import Value
-# from os import symlink
 import questionary
 import shelve
 import pandas as pd
 import sqlalchemy
-# from pathlib import Path
-import remy_workflow.finnhubIO as fh
-# from time import sleep
+import finnhubIO as fh
 import yfinance as yf
 import concurrent.futures
 
