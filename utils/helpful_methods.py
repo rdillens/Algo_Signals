@@ -3,7 +3,7 @@ import questionary
 import shelve
 import pandas as pd
 import sqlalchemy
-import remy_workflow.finnhubIO as fh
+import finnhubIO as fh
 import yfinance as yf
 import concurrent.futures
 

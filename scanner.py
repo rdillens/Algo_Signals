@@ -1,8 +1,8 @@
 import questionary
-import remy_workflow.helpful_methods as hm
+import utils.helpful_methods as hm
 import shelve
 import fire
-from remy_workflow.yfinance_ticker_cols import (col_list, scan_col_list)
+from utils.yfinance_ticker_cols import (scan_col_list)
 import pandas as pd
 import sqlalchemy
 from pathlib import Path
