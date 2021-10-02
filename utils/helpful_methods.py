@@ -3,7 +3,7 @@ import questionary
 import shelve
 import pandas as pd
 import sqlalchemy
-import finnhubIO as fh
+import utils.finnhubIO as fh
 import yfinance as yf
 import concurrent.futures
 
@@ -273,8 +273,13 @@ def process_ticker_info(ticker):
     return product_df
 
 
-def process_ticker_hist(ticker):
-    candle_df = yf.download(ticker, period="max")
+def process_ticker_hist(ticker, interval='1d'):
+    # valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
+    candle_df = yf.download(
+        ticker, 
+        period="max",
+        interval=interval,
+        )
     print(candle_df.head())
     candle_df.rename_axis('Datetime', inplace=True)
     candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
@@ -315,3 +320,6 @@ def get_minute_candles(ticker):
     # print(candle_df)
     candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
     return candle_df
+
+
+    
