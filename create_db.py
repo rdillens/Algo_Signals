@@ -15,7 +15,7 @@ else:
     os.makedirs(path)
     print('No')
 
-db_connection_string = 'sqlite:///./Resources/products.db'
+db_connection_string = 'sqlite:///./Resources/product.db'
 
 engine = sqlalchemy.create_engine(db_connection_string)
 
@@ -36,7 +36,9 @@ def main(ticker=None):
                         con=engine, if_exists='replace')
 
     df = hm.add_trade_signals(candle_1m_df)
+    print(df.head())
 
+    df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     return
 
 
