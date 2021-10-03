@@ -6,6 +6,7 @@ import sqlalchemy
 import utils.finnhubIO as fh
 import yfinance as yf
 import concurrent.futures
+import utils.ta_lib_indicators as ti
 
 
 # Create a temporary SQLite database and populate the database with content from the etf.db seed file
@@ -32,7 +33,7 @@ def get_username(username=None):
         username = questionary.text(
             "What is your name?",
             qmark='',
-            ).ask()
+        ).ask()
     with shelve.open(shelf_path) as sh:
         # Check to see if username exists in shelf
         if username in sh:
@@ -47,6 +48,72 @@ def get_username(username=None):
     return username
 
 
+def input_ticker():
+    resp = questionary.text(
+        "What stock ticker should I look up?",
+        qmark='',
+    ).ask()
+    with shelve.open(shelf_path) as sh:
+        # Check to see if username exists in shelf
+        if resp not in sh:
+            sh[resp] = {}
+            message = f"Let me add {resp} to my files..."
+        # If username does not exist, create empty dictionary
+        else:
+            message = f"Ok, let's look at {resp}."
+        print(message)
+        return resp
+
+
+def choose_patterns():
+    pattern_list = []
+    pattern_df = pd.DataFrame(
+        list(ti.pattern_recognition.items()),
+        columns=['Index', 'Pattern'],
+    )
+    pattern_df = pattern_df.set_index('Index')
+    patterns_list = list(pattern_df['Pattern'])
+    choice = choose_from_list(
+        patterns_list,
+        prompt_string="Choose a Pattern:"
+         )
+    patterns_list.remove(choice)
+    pattern_list.append(choice)
+    while(questionary.confirm("Add another pattern?").ask()):
+        choice = choose_from_list(
+            patterns_list,
+            prompt_string="Choose a Pattern:"
+            )
+        patterns_list.remove(choice)
+        pattern_list.append(choice)
+
+    return pattern_list
+
+
+def choose_from_list(
+    choice_list,
+    default=None,
+    prompt_string=None
+):
+    if prompt_string is None:
+        prompt_string = "Choose from the list:"
+    if default in choice_list:
+        resp = questionary.select(
+            prompt_string,
+            choices=choice_list,
+            qmark='',
+            default=default,
+        ).ask()
+    else:
+        resp = questionary.select(
+            prompt_string,
+            choices=choice_list,
+            qmark='',
+        ).ask()
+
+    return resp
+
+
 def choose_market():
     default_market = 'stock'
     if default_market in market_list:
@@ -55,13 +122,13 @@ def choose_market():
             choices=market_list,
             qmark='',
             default=default_market,
-            ).ask()
+        ).ask()
     else:
         market = questionary.select(
             "What market are you looking at?",
             choices=market_list,
             qmark='',
-            ).ask()
+        ).ask()
 
     return market
 
@@ -77,16 +144,16 @@ def choose_exchange(market=None):
         if default_exchange in crypto_list:
             exchange = questionary.select(
                 "What crypto exchange do you want to use?",
-                choices = sorted(fh.crypto_exchange_list),
+                choices=sorted(fh.crypto_exchange_list),
                 qmark='',
                 default=default_exchange,
-                ).ask()
+            ).ask()
         else:
             exchange = questionary.select(
                 "What crypto exchange do you want to use?",
-                choices = sorted(fh.crypto_exchange_list),
+                choices=sorted(fh.crypto_exchange_list),
                 qmark='',
-                ).ask()
+            ).ask()
     return exchange
 
 
@@ -106,19 +173,18 @@ def choose_product_type(market=None, exchange=None):
             print(f'found {default_base}')
 
             product_type = questionary.select(
-                    "What currency do you use?",
-                    choices=base_list,
-                    qmark='',
-                    default='USD',
-                    ).ask()
+                "What currency do you use?",
+                choices=base_list,
+                qmark='',
+                default='USD',
+            ).ask()
 
         else:
             product_type = questionary.select(
-                    "What currency do you use?",
-                    choices=base_list,
-                    qmark='',
-                    ).ask()
-
+                "What currency do you use?",
+                choices=base_list,
+                qmark='',
+            ).ask()
 
     if market == 'stock':
         default_type = 'Common Stock'
@@ -139,6 +205,7 @@ def choose_product_type(market=None, exchange=None):
 
     return product_type
 
+
 def gen_product_df(market=None, exchange=None, product_type=None):
     if market == None:
         market = choose_market()
@@ -148,13 +215,16 @@ def gen_product_df(market=None, exchange=None, product_type=None):
         product_type = choose_product_type(market, exchange)
 
     if market == 'stock':
-        product_df=fh.stocks_df.loc[lambda df: df['type'] == product_type]['symbol'].reset_index(drop=True)
+        product_df = fh.stocks_df.loc[lambda df: df['type']
+                                      == product_type]['symbol'].reset_index(drop=True)
 
     if market == 'crypto':
         crypto_df = gen_crypto_df(exchange)
-        product_df=crypto_df.loc[lambda df: df['baseCurrency'] == product_type]['displaySymbol'].reset_index(drop=True)
+        product_df = crypto_df.loc[lambda df: df['baseCurrency']
+                                   == product_type]['displaySymbol'].reset_index(drop=True)
 
     return product_df
+
 
 def gen_crypto_df(exchange=None):
     if exchange == None:
@@ -163,16 +233,16 @@ def gen_crypto_df(exchange=None):
     df = pd.DataFrame(crypto_list)
     df['baseCurrency'] = df['displaySymbol'].apply(lambda x: x[x.find('/')+1:])
     df['quoteCurrency'] = df['displaySymbol'].apply(lambda x: x[:x.find('/')])
-    
+
     return df
 
 
 def get_market_info(df, market, exchange, product_type, engine):
-    inspector = sqlalchemy.inspect(engine)
-    table_names = inspector.get_table_names()
-    if table_names:
-        df = pd.read_sql_table(table_names[0], con=engine)
-        print(f"Loaded db {len(df)} items")
+    # inspector = sqlalchemy.inspect(engine)
+    # table_names = inspector.get_table_names()
+    # if table_names:
+    #     df = pd.read_sql_table(table_names[0], con=engine)
+    #     print(f"Loaded db {len(df)} items")
     # else:
     #     df = pd.DataFrame(df)
     # sleep_time = 1.0/10.0
@@ -181,25 +251,27 @@ def get_market_info(df, market, exchange, product_type, engine):
         time_start = datetime.now()
         # df.set_index('symbol', inplace=True)
         print(f'Found {len(df)}')
-        symbol_list = list(df['symbol'])
+        print(df.head())
+        # symbol_list = list(df['symbol'])
 
         search_limit = 10
-        sliced_symbol_list = symbol_list[:search_limit]
-        df = get_threaded_info(sliced_symbol_list, df).copy()
+        # sliced_symbol_list = symbol_list[:search_limit]
+        # df = get_threaded_info(sliced_symbol_list, df).copy()
 
         run_time = datetime.now() - time_start
-        estimated_total_run_time = len(symbol_list) * (run_time.total_seconds()/search_limit) / 60
-        print(f"Time to run: {run_time}\nEstimated time to run entire market: {estimated_total_run_time} minutes.")
+        # estimated_total_run_time = len(symbol_list) * (run_time.total_seconds()/search_limit) / 60
+        # print(f"Time to run: {run_time}\nEstimated time to run entire market: {estimated_total_run_time} minutes.")
     return df
 
 
 def get_product_info(symbol, market, exchange, product_type):
     print(f"Getting info for {symbol} {market} {exchange} {product_type}")
-    if market=='stock':
+    if market == 'stock':
         ticker = yf.Ticker(symbol)
         print(ticker.info)
         # return fh.finnhub_client.aggregate_indicator(symbol, 'D')
     return {}
+
 
 def get_threaded_info(stocks, df):
     exception_count = 0
@@ -207,8 +279,9 @@ def get_threaded_info(stocks, df):
     exception_list = []
     key_error_list = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-    # with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_to_dict = {executor.submit(get_stock_info, stock): stock for stock in stocks}
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_dict = {executor.submit(
+            get_stock_info, stock): stock for stock in stocks}
         for future in concurrent.futures.as_completed(future_to_dict):
             stock = future_to_dict[future]
             try:
@@ -231,11 +304,13 @@ def get_threaded_info(stocks, df):
             except Exception as exc:
                 exception_count += 1
                 exception_list.append(stock)
-                print(f'\n{stock} generated a {type(exc)} exception: {exc}', end='\n')
+                print(
+                    f'\n{stock} generated a {type(exc)} exception: {exc}', end='\n')
             else:
                 pass
                 print(f"\r{stock:<6s}", end="")
-        print(f'\rDone! {cap_count} stocks, {len(key_error_list)} key errors, {exception_count} unhandled exceptions.')
+        print(
+            f'\rDone! {cap_count} stocks, {len(key_error_list)} key errors, {exception_count} unhandled exceptions.')
         print(f'Tickers with no market cap data:\n{key_error_list}')
     # return info_dict
     return df
@@ -251,9 +326,10 @@ def get_stock_info(stock):
 
 
 def get_stock_market_cap(stock):
-#     print(f'\rGetting {stock} ticker...', end='')
+    #     print(f'\rGetting {stock} ticker...', end='')
     ticker = yf.Ticker(stock)
     return ticker.info['marketCap']
+
 
 def process_ticker_info(ticker):
     print(ticker)
@@ -262,7 +338,8 @@ def process_ticker_info(ticker):
     product_df = pd.DataFrame(stock_info_list, columns=['Info', ticker])
     product_df = product_df.set_index("Info")
     # product_df = product_df.T
-    drop_rows = ['zip', 'sector', 'fullTimeEmployees', 'longBusinessSummary', 'city', 'phone', 'state', 'country', 'companyOfficers', 'website', 'maxAge', 'address1', 'address2', 'industry', 'logo_url', 'tradeable', 'fromCurrency', ]        
+    drop_rows = ['zip', 'sector', 'fullTimeEmployees', 'longBusinessSummary', 'city', 'phone', 'state', 'country',
+                 'companyOfficers', 'website', 'maxAge', 'address1', 'address2', 'industry', 'logo_url', 'tradeable', 'fromCurrency', ]
     # print(product_df.index)
     for row in drop_rows:
         if row in product_df.index:
@@ -276,27 +353,28 @@ def process_ticker_info(ticker):
 def process_ticker_hist(ticker, interval='1d'):
     # valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
     candle_df = yf.download(
-        ticker, 
+        ticker,
         period="max",
         interval=interval,
-        )
+    )
     print(candle_df.head())
     candle_df.rename_axis('Datetime', inplace=True)
     candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
     return candle_df
-      
+
+
 def get_minute_candles(ticker):
-    current_time = int(round(datetime.now().timestamp(),0))
+    current_time = int(round(datetime.now().timestamp(), 0))
     print(datetime.fromtimestamp(current_time))
     max_offset = 86400 * 10 * 365
     dt_end = current_time
     dt_start = dt_end - max_offset
     candles = fh.get_stock_candles(
-        ticker, 
-        dt_start=dt_start, 
-        dt_end=dt_end, 
+        ticker,
+        dt_start=dt_start,
+        dt_end=dt_end,
         resolution='1'
-        )
+    )
     # This is causing an error
     try:
         candle_df = pd.DataFrame(candles)
@@ -305,21 +383,27 @@ def get_minute_candles(ticker):
         raise e
     candle_df.rename(
         columns={
-            't': 'Datetime', 
-            'c': 'Close', 
-            'h': 'High', 
-            'l': 'Low', 
-            'o': 'Open', 
-            's': 'Status', 
+            't': 'Datetime',
+            'c': 'Close',
+            'h': 'High',
+            'l': 'Low',
+            'o': 'Open',
+            's': 'Status',
             'v': 'Volume',
-            },
+        },
         inplace=True,
-        )
-    candle_df['Datetime'] = candle_df['Datetime'].apply(lambda df: datetime.fromtimestamp(df))
+    )
+    candle_df['Datetime'] = candle_df['Datetime'].apply(
+        lambda df: datetime.fromtimestamp(df))
     candle_df.set_index('Datetime', inplace=True, drop=True)
     # print(candle_df)
     candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
     return candle_df
 
 
-    
+def add_trade_signals(df):
+    pattern_list = choose_patterns()
+    print(pattern_list)
+    for pattern in pattern_list:
+        pass
+    return df
