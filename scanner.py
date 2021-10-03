@@ -23,10 +23,11 @@ def main(user=None, market=None, exchange=None, product_type=None, ticker=None):
     if ticker is not None:
         product_df = hm.process_ticker_info(ticker)
         product_df.to_sql(ticker + "_Info", con=engine, if_exists='replace')
-        candle_1d_df = hm.process_ticker_hist(ticker)
+        candle_1d_df = hm.process_ticker_hist(ticker, interval='1d')
         candle_1d_df.to_sql(ticker + "_1_Day_Candles", con=engine, if_exists='replace')
 
         candle_1m_df = hm.get_minute_candles(ticker)
+        # candle_1m_df = hm.process_ticker_hist(ticker, interval='1m')
         candle_1m_df.to_sql(ticker + "_1_Min_Candles", con=engine, if_exists='replace')
     else:
         # Check for username in shelf, create new record if one does not exist

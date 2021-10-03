@@ -51,7 +51,7 @@ momentum_indicators = {
     "WILLR":"Williams' %R"
 }
 
-volumne_indicators = {
+volume_indicators = {
     "AD":"Chaikin A/D Line",
     "ADOSC":"Chaikin A/D Oscillator",
     "OBV":"On Balance Volume",
