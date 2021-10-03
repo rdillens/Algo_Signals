@@ -1,3 +1,6 @@
+# Machine Learning models
+*.h5
+
 # Data files
 *.csv
 *.db
