@@ -7,6 +7,7 @@ import utils.finnhubIO as fh
 import yfinance as yf
 import concurrent.futures
 import utils.ta_lib_indicators as ti
+import talib
 
 
 # Create a temporary SQLite database and populate the database with content from the etf.db seed file
@@ -87,7 +88,9 @@ def choose_patterns():
         patterns_list.remove(choice)
         pattern_list.append(choice)
 
-    return pattern_list
+    pattern_index_list = pattern_df[pattern_df['Pattern'].isin(pattern_list)].index
+    print(pattern_index_list)
+    return pattern_index_list
 
 
 def choose_from_list(
@@ -405,5 +408,37 @@ def add_trade_signals(df):
     pattern_list = choose_patterns()
     print(pattern_list)
     for pattern in pattern_list:
-        pass
+
+        pattern_function = getattr(talib, pattern)
+        try:
+            result = pattern_function(df['Open'], df['High'], df['Low'], df['Close'])
+            df[pattern] = result
+        except Exception as e:
+            print(f"{type(e)} Exception! {e}")
+    print(df.head())
+
+    len(pattern_list)
+    df['Sum Patterns'] = df.iloc[:, -(len(pattern_list)):].sum(axis=1)
+
+    df['Trade Signal'] = 0.0
+
+    threshold_value = 0.0
+
+    def check_sum_value(sum_value):
+        if sum_value > threshold_value:
+            return 1
+        elif sum_value < -threshold_value:
+            return -1
+        else:
+            return 0.0
+
+    df['Trade Signal'] = df['Sum Patterns'].apply(lambda x: check_sum_value(x))
+    df.drop(columns='Sum Patterns', inplace=True)
+
     return df
+
+
+def add_overlap_studies(df):
+    # overlap_study_list = choose_overlap_studies()
+    # print(overlap_study_list)
+    pass
