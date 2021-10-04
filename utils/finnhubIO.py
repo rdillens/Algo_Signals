@@ -16,6 +16,15 @@ else:
 # Setup client
 finnhub_client = finnhub.Client(api_key=finnhub_api_key)
 
+try:
+    country_list = finnhub_client.country()
+except ConnectionError:
+    print(f"Check your internet connection!")
+    raise Exception
+except Exception as e:
+    print(f"{type(e)} {e}")
+    raise Exception
+
 # # Crypto Exchange
 # print(finnhub_client.crypto_exchanges())
 crypto_exchange_list = finnhub_client.crypto_exchanges()

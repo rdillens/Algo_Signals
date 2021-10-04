@@ -67,6 +67,7 @@ def input_ticker():
 
 
 def choose_patterns():
+    default='Doji'
     pattern_list = []
     pattern_df = pd.DataFrame(
         list(ti.pattern_recognition.items()),
@@ -76,6 +77,7 @@ def choose_patterns():
     patterns_list = list(pattern_df['Pattern'])
     choice = choose_from_list(
         patterns_list,
+        default=default,
         prompt_string="Choose a Pattern:"
          )
     patterns_list.remove(choice)
@@ -83,6 +85,7 @@ def choose_patterns():
     while(questionary.confirm("Add another pattern?").ask()):
         choice = choose_from_list(
             patterns_list,
+            default=default,
             prompt_string="Choose a Pattern:"
             )
         patterns_list.remove(choice)
@@ -91,6 +94,35 @@ def choose_patterns():
     pattern_index_list = pattern_df[pattern_df['Pattern'].isin(pattern_list)].index
     print(pattern_index_list)
     return pattern_index_list
+
+
+def choose_functions(function_dict, function_name, default=None):
+    function_list = []
+    function_df = pd.DataFrame(
+        list(function_dict.items()),
+        columns=['Index', function_name],
+    )
+    function_df = function_df.set_index('Index')
+    functions_list = list(function_df[function_name])
+    choice = choose_from_list(
+        functions_list,
+        default=default,
+        prompt_string=f"Choose a {function_name}:"
+         )
+    functions_list.remove(choice)
+    function_list.append(choice)
+
+    while(questionary.confirm(f"Add another {function_name}?").ask() and len(functions_list) > 0):
+        choice = choose_from_list(
+            functions_list,
+            # default=default,
+            prompt_string=f"Choose a {function_name}:"
+            )
+        functions_list.remove(choice)
+        function_list.append(choice)
+
+    function_index_list = function_df[function_df[function_name].isin(function_list)].index
+    return function_index_list
 
 
 def choose_from_list(
@@ -439,6 +471,281 @@ def add_trade_signals(df):
 
 
 def add_overlap_studies(df):
-    # overlap_study_list = choose_overlap_studies()
-    # print(overlap_study_list)
-    pass
+    if(questionary.confirm('Add overlap study?').ask()):
+        function_list = choose_functions(ti.overlap_studies, 'Overlap Study', default='Bollinger Bands')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'BBANDS':
+                # upperband, middleband, lowerband = BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+                df['Upper Band'], df['Middle Band'], df['Lower Band'] = function(df['Close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+            if f == 'DEMA':
+                # real = DEMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'EMA':
+                # real = EMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'HT_TRENDLINE':
+                # real = HT_TRENDLINE(close)
+                df[f] = function(df['Close'])
+            if f == 'KAMA':
+                # real = KAMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'MA':
+                # real = MA(close, timeperiod=30, matype=0)
+                df[f] = function(df['Close'], timeperiod=30, matype=0)
+
+            # MAMA FUNCTION CAUSING ERROR
+
+            # if f == 'MAMA':
+            #     # mama, fama = MAMA(close, fastlimit=0, slowlimit=0)
+            #     df['MAMA'], df['FAMA'] = function(df['Close'], fastlimit=0, slowlimit=0)
+
+
+            # TypeError: Argument 'periods' has incorrect type (expected numpy.ndarray, got int)
+
+            # if f == 'MAVP':
+            #     # real = MAVP(close, periods, minperiod=2, maxperiod=30, matype=0)
+            #     df[f] = function(df['Close'], 3, minperiod=2, maxperiod=30, matype=0)
+
+
+            if f == 'MIDPOINT':
+                # real = MIDPOINT(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'MIDPRICE':
+                # real = MIDPRICE(high, low, timeperiod=30)
+                df[f] = function(df['High'], df['Low'], timeperiod=14)
+            if f == 'SAR':
+                # real = SAR(high, low, acceleration=0, maximum=0)
+                df[f] = function(df['High'], df['Low'], acceleration=0, maximum=0)
+            if f == 'SAREXT':
+                # real = SAREXT(high, low, startvalue=0, offsetonreverse=0, accelerationinitlong=0, accelerationlong=0, accelerationmaxlong=0, accelerationinitshort=0, accelerationshort=0, accelerationmaxshort=0)
+                df[f] = function(df['High'], df['Low'], startvalue=0, offsetonreverse=0, accelerationinitlong=0, accelerationlong=0, accelerationmaxlong=0, accelerationinitshort=0, accelerationshort=0, accelerationmaxshort=0)
+            if f == 'SMA':
+                # real = SMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'T3':
+                # real = T3(close, timeperiod=5, vfactor=0)
+                df[f] = function(df['Close'], timeperiod=5, vfactor=0)
+            if f == 'TEMA':
+                # real = TEMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'TRIMA':
+                # real = TRIMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'WMA':
+                # real = WMA(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+
+    return df
+
+
+def add_momentum_indicators(df):
+    if(questionary.confirm('Add momentum indicator?').ask()):
+        function_list = choose_functions(ti.momentum_indicators, 'Momentum Indicator', default='Moving Average Convergence/Divergence')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'ADX':
+                # real = ADX(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'ADXR':
+                # real = ADXR(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'APO':
+                # real = APO(close, fastperiod=12, slowperiod=26, matype=0)
+                df[f] = function(df['Close'], fastperiod=12, slowperiod=26, matype=0)
+            if f == 'AROON':
+                # aroondown, aroonup = AROON(high, low, timeperiod=14)
+                df['AROONDOWN'], df['AROONUP'] = function(df['High'], df['Low'], timeperiod=14)
+            if f == 'AROONOSC':
+                # real = AROONOSC(high, low, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], timeperiod=14)
+            if f == 'BOP':
+                # real = BOP(open, high, low, close)
+                df[f] = function(df["Open"], df['High'], df['Low'], df['Close'])
+            if f == 'CCI':
+                # real = CCI(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'CMO':
+                # real = CMO(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'DX':
+                # real = DX(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'MACD':
+                # macd, macdsignal, macdhist = MACD(close, fastperiod=12, slowperiod=26, signalperiod=9)
+                df['MACD'], df['MACD_SIGNAL'], df['MACD_HIST'] = function(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+            if f == 'MACDEXT':
+                # macd, macdsignal, macdhist = MACDEXT(close, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0)
+                df['MACDEXT'], df['MACDEXT_SIGNAL'], df['MACDEXT_HIST'] = function(df['Close'], fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0)
+            if f == 'MACDFIX':
+                # macd, macdsignal, macdhist = MACDFIX(close, signalperiod=9)
+                df['MACDFIX'], df['MACDFIX_SIGNAL'], df['MACDFIX_HIST'] = function(df['Close'], signalperiod=9)
+            if f == 'MFI':
+                # real = MFI(high, low, close, volume, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=14)
+            if f == 'MINUS_DI':
+                # real = MINUS_DI(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'MINUS_DM':
+                # real = MINUS_DM(high, low, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], timeperiod=14)
+            if f == 'MOM':
+                # real = MOM(close, timeperiod=10)
+                df[f] = function(df['Close'], timeperiod=10)
+            if f == 'PLUS_DI':
+                # real = PLUS_DI(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'PLUS_DM':
+                # real = PLUS_DM(high, low, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], timeperiod=14)
+            if f == 'PPO':
+                # real = PPO(close, fastperiod=12, slowperiod=26, matype=0)
+                df[f] = function(df['Close'], fastperiod=12, slowperiod=26, matype=0)
+            if f == 'ROC':
+                # real = ROC(close, timeperiod=10)
+                df[f] = function(df['Close'], timeperiod=10)
+            if f == 'ROCP':
+                # real = ROCP(close, timeperiod=10)
+                df[f] = function(df['Close'], timeperiod=10)
+            if f == 'ROCR':
+                # real = ROCR(close, timeperiod=10)
+                df[f] = function(df['Close'], timeperiod=10)
+            if f == 'ROCR100':
+                # real = ROCR100(close, timeperiod=10)
+                df[f] = function(df['Close'], timeperiod=10)
+            if f == 'RSI':
+                # real = RSI(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'STOCH':
+                # slowk, slowd = STOCH(high, low, close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+                df['STOCH_SLOWK'], df['STOCH_SLOWD'] = function(df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+            if f == 'STOCHF':
+                # fastk, fastd = STOCHF(high, low, close, fastk_period=5, fastd_period=3, fastd_matype=0)
+                df['STOCHF_FASTK'], df['STOCHF_FASTD'] = function(df['High'], df['Low'], df['Close'], fastk_period=5, fastd_period=3, fastd_matype=0)
+            if f == 'STOCHRSI':
+                # fastk, fastd = STOCHRSI(close, timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+                df['STOCHRSI_FASTK'], df['STOCHRSI_FASTD'] = function(df['Close'], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+            if f == 'TRIX':
+                # real = TRIX(close, timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30)
+            if f == 'ULTOSC':
+                # real = ULTOSC(high, low, close, timeperiod1=7, timeperiod2=14, timeperiod3=28)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod1=7, timeperiod2=14, timeperiod3=28)
+            if f == 'WILLR':
+                # real = WILLR(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+
+    return df
+
+
+def add_volume_indicators(df):
+    if(questionary.confirm('Add volume indicator?').ask()):
+        function_list = choose_functions(ti.volume_indicators, 'Volume Indicator')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'AD':
+                # real = AD(high, low, close, volume)
+                df[f] = function(df['High'], df['Low'], df['Close'], df['Volume'])
+            if f == 'ADOSC':
+                # real = ADOSC(high, low, close, volume, fastperiod=3, slowperiod=10)
+                df[f] = function(df['High'], df['Low'], df['Close'], df['Volume'], fastperiod=3, slowperiod=10)
+            if f == 'OBV':
+                # real = OBV(close, volume)
+                df[f] = function(df['Close'], df['Volume'])
+    return df
+
+
+def add_volatility_indicators(df):
+    if(questionary.confirm('Add volatility indicator?').ask()):
+        function_list = choose_functions(ti.volatility_indicators, 'Volatility Indicator', default='Average True Range')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'ATR':
+                # real = ATR(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'NATR':
+                # real = NATR(high, low, close, timeperiod=14)
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=14)
+            if f == 'TRANGE':
+                # real = TRANGE(high, low, close)
+                df[f] = function(df['High'], df['Low'], df['Close'])
+    return df
+
+
+def add_price_transform_functions(df):
+    if(questionary.confirm('Add price transform function?').ask()):
+        function_list = choose_functions(ti.price_transform, 'Price Transform Function', default='Weighted Close Price')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'AVGPRICE':
+                # real = AVGPRICE(open, high, low, close)
+                df[f] = function(df['Open'], df['High'], df['Low'], df['Close'])
+            if f == 'MEDPRICE':
+                # real = MEDPRICE(high, low)
+                df[f] = function(df['High'], df['Low'])
+            if f == 'TYPPRICE':
+                # real = TYPPRICE(high, low, close)
+                df[f] = function(df['High'], df['Low'], df['Close'])
+            if f == 'WCLPRICE':
+                # real = WCLPRICE(high, low, close)
+                df[f] = function(df['High'], df['Low'], df['Close'])
+    return df
+
+
+def add_cycle_indicator_functions(df):
+    if(questionary.confirm('Add cycle indicator?').ask()):
+        function_list = choose_functions(ti.cycle_indicators, 'Cycle Indicator Function')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'HT_DCPERIOD':
+                # real = HT_DCPERIOD(close)
+                df[f] = function(df['Close'])
+            if f == 'HT_DCPHASE':
+                # real = HT_DCPHASE(close)
+                df[f] = function(df['Close'])
+            if f == 'HT_PHASOR':
+                # inphase, quadrature = HT_PHASOR(close)
+                df['INPHASE'], df['QUADRATURE'] = function(df['Close'])
+            if f == 'HT_SINE':
+                # sine, leadsine = HT_SINE(close)
+                df['SINE'], df['LEADSINE'] = function(df['Close'])
+            if f == 'HT_TRENDMODE':
+                # integer = HT_TRENDMODE(close)
+                df['INTEGER'] = function(df['Close'])
+    return df
+
+
+def add_statistic_functions(df):
+    if(questionary.confirm('Add statistic function?').ask()):
+        function_list = choose_functions(ti.statistic_functions, 'Statistic Function', default='Linear Regression')
+        for f in function_list:
+            function = getattr(talib, f)
+            if f == 'BETA':
+                # real = BETA(high, low, timeperiod=5)
+                df[f] = function(df['High'], df['Low'], timeperiod=5)
+            if f == 'CORREL':
+                # real = CORREL(high, low, timeperiod=30)
+                df[f] = function(df['High'], df['Low'], timeperiod=30)
+            if f == 'LINEARREG':
+                # real = LINEARREG(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'LINEARREG_ANGLE':
+                # real = LINEARREG_ANGLE(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'LINEARREG_INTERCEPT':
+                # real = LINEARREG_INTERCEPT(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'LINEARREG_SLOPE':
+                # real = LINEARREG_SLOPE(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'STDDEV':
+                # real = STDDEV(close, timeperiod=5, nbdev=1)
+                df[f] = function(df['Close'], timeperiod=5, nbdev=1)
+            if f == 'TSF':
+                # real = TSF(close, timeperiod=14)
+                df[f] = function(df['Close'], timeperiod=14)
+            if f == 'VAR':
+                # real = VAR(close, timeperiod=5, nbdev=1)
+                df[f] = function(df['Close'], timeperiod=5, nbdev=1)
+    return df
+

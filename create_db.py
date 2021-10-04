@@ -36,6 +36,13 @@ def main(ticker=None):
                         con=engine, if_exists='replace')
 
     df = hm.add_trade_signals(candle_1m_df)
+    df = hm.add_overlap_studies(df)
+    df = hm.add_momentum_indicators(df)
+    df = hm.add_volume_indicators(df)
+    df = hm.add_volatility_indicators(df)
+    df = hm.add_price_transform_functions(df)
+    df = hm.add_cycle_indicator_functions(df)
+    df = hm.add_statistic_functions(df)
     print(df.head())
 
     df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
