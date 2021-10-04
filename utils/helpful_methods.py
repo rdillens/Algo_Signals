@@ -67,6 +67,7 @@ def input_ticker():
 
 
 def choose_patterns():
+    default='Doji'
     pattern_list = []
     pattern_df = pd.DataFrame(
         list(ti.pattern_recognition.items()),
@@ -76,6 +77,7 @@ def choose_patterns():
     patterns_list = list(pattern_df['Pattern'])
     choice = choose_from_list(
         patterns_list,
+        default=default,
         prompt_string="Choose a Pattern:"
          )
     patterns_list.remove(choice)
@@ -83,6 +85,7 @@ def choose_patterns():
     while(questionary.confirm("Add another pattern?").ask()):
         choice = choose_from_list(
             patterns_list,
+            default=default,
             prompt_string="Choose a Pattern:"
             )
         patterns_list.remove(choice)
@@ -93,7 +96,7 @@ def choose_patterns():
     return pattern_index_list
 
 
-def choose_functions(function_dict, function_name):
+def choose_functions(function_dict, function_name, default=None):
     function_list = []
     function_df = pd.DataFrame(
         list(function_dict.items()),
@@ -103,6 +106,7 @@ def choose_functions(function_dict, function_name):
     functions_list = list(function_df[function_name])
     choice = choose_from_list(
         functions_list,
+        default=default,
         prompt_string=f"Choose a {function_name}:"
          )
     functions_list.remove(choice)
@@ -111,6 +115,7 @@ def choose_functions(function_dict, function_name):
     while(questionary.confirm(f"Add another {function_name}?").ask() and len(functions_list) > 0):
         choice = choose_from_list(
             functions_list,
+            # default=default,
             prompt_string=f"Choose a {function_name}:"
             )
         functions_list.remove(choice)
@@ -467,7 +472,7 @@ def add_trade_signals(df):
 
 def add_overlap_studies(df):
     if(questionary.confirm('Add overlap study?').ask()):
-        function_list = choose_functions(ti.overlap_studies, 'Overlap Study')
+        function_list = choose_functions(ti.overlap_studies, 'Overlap Study', default='Bollinger Bands')
         for f in function_list:
             function = getattr(talib, f)
             if f == 'BBANDS':
@@ -536,7 +541,7 @@ def add_overlap_studies(df):
 
 def add_momentum_indicators(df):
     if(questionary.confirm('Add momentum indicator?').ask()):
-        function_list = choose_functions(ti.momentum_indicators, 'Momentum Indicator')
+        function_list = choose_functions(ti.momentum_indicators, 'Momentum Indicator', default='Moving Average Convergence/Divergence')
         for f in function_list:
             function = getattr(talib, f)
             if f == 'ADX':
@@ -652,7 +657,7 @@ def add_volume_indicators(df):
 
 def add_volatility_indicators(df):
     if(questionary.confirm('Add volatility indicator?').ask()):
-        function_list = choose_functions(ti.volatility_indicators, 'Volatility Indicator')
+        function_list = choose_functions(ti.volatility_indicators, 'Volatility Indicator', default='Average True Range')
         for f in function_list:
             function = getattr(talib, f)
             if f == 'ATR':
@@ -669,7 +674,7 @@ def add_volatility_indicators(df):
 
 def add_price_transform_functions(df):
     if(questionary.confirm('Add price transform function?').ask()):
-        function_list = choose_functions(ti.price_transform, 'Price Transform Function')
+        function_list = choose_functions(ti.price_transform, 'Price Transform Function', default='Weighted Close Price')
         for f in function_list:
             function = getattr(talib, f)
             if f == 'AVGPRICE':
@@ -712,7 +717,7 @@ def add_cycle_indicator_functions(df):
 
 def add_statistic_functions(df):
     if(questionary.confirm('Add statistic function?').ask()):
-        function_list = choose_functions(ti.statistic_functions, 'Statistic Function')
+        function_list = choose_functions(ti.statistic_functions, 'Statistic Function', default='Linear Regression')
         for f in function_list:
             function = getattr(talib, f)
             if f == 'BETA':
