@@ -5,7 +5,7 @@ overlap_studies = {
     "HT_TRENDLINE":"Hilbert Transform - Instantaneous Trendline",
     "KAMA":"Kaufman Adaptive Moving Average",
     "MA":"Moving average",
-    # "MAMA":"MESA Adaptive Moving Average",
+    "MAMA":"MESA Adaptive Moving Average",
     # "MAVP":"Moving average with variable period",
     "MIDPOINT":"MidPoint over period",
     "MIDPRICE":"Midpoint Price over period",
