@@ -822,20 +822,135 @@ def add_support_resistance(minutely_df, daily_df):
             day_list
         )
     )
+    sr_type = choose_from_list(sr_types_list, 'Traditional', 'Choose pivot points (support/resistance)')
+    if sr_type == 'Traditional':
+        sr_df = sr_traditional(daily_df)
+    if sr_type == 'Fibonacci':
+        sr_df = sr_fibonacci(daily_df)
+    if sr_type == 'Woodie':
+        sr_df = sr_woodie(daily_df)
+    if sr_type == 'Classic':
+        sr_df = sr_classic(daily_df)
+    if sr_type == 'Denmark':
+        sr_df = sr_denmark(daily_df)
+    if sr_type == 'Camarilla':
+        sr_df = sr_camarilla(daily_df)
+        
+    # df['Support'] = df['Previous Day'].apply(
+    #     lambda x: get_support(
+    #         x,
+    #         daily_df,
+    #     )
+    # )
 
-    df['Support'] = df['Previous Day'].apply(
-        lambda x: get_support(
-            x,
-            daily_df,
-        )
-    )
-
-    df['Resistance'] = df['Previous Day'].apply(
-        lambda x: get_resistance(
-            x,
-            daily_df,
-        )
-    )
+    # df['Resistance'] = df['Previous Day'].apply(
+    #     lambda x: get_resistance(
+    #         x,
+    #         daily_df,
+    #     )
+    # )
 
     # print(df.iloc[-2000:].head(20))
-    return df.drop(columns=['Previous Day'])
+    return df
+
+
+sr_types_list = ['Traditional', 'Fibonacci', 'Woodie', 'Classic', 'Denmark', 'Camarilla']
+
+
+def sr_traditional(df):
+    df['PP'] = (df['High'].shift(1) + df['Low'].shift(1) + df['Close'].shift(1)) / 3
+    df['R1'] = df['PP'] * 2 - df['Low'].shift(1)
+    df['R2'] = df['PP'] + (df['High'].shift(1) - df['Low'].shift(1))
+    df['R3'] = df['PP'] * 2 + (df['High'].shift(1) - 2 * df['Low'].shift(1))
+    df['R4'] = df['PP'] * 3 + (df['High'].shift(1) - 3 * df['Low'].shift(1))
+    df['R5'] = df['PP'] * 4 + (df['High'].shift(1) - 4 * df['Low'].shift(1))
+    df['S1'] = df['PP'] * 2 - df['High'].shift(1)
+    df['S2'] = df['PP'] - (df['High'].shift(1) - df['Low'].shift(1))
+    df['S3'] = df['PP'] * 2 - (2 * df['High'].shift(1) - df['Low'].shift(1))
+    df['S4'] = df['PP'] * 3 - (3 * df['High'].shift(1) - df['Low'].shift(1))
+    df['S5'] = df['PP'] * 4 - (4 * df['High'].shift(1) - df['Low'].shift(1))
+    
+    return df
+
+
+def sr_fibonacci(df):
+    df['PP'] = (df['High'].shift(1) + df['Low'].shift(1) + df['Close'].shift(1)) / 3
+    df['R1'] = df['PP'] + 0.382 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['S1'] = df['PP'] - 0.382 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['R2'] = df['PP'] + 0.618 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['S2'] = df['PP'] - 0.618 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['R3'] = df['PP'] + (df['High'].shift(1) - df['Low'].shift(1))
+    df['S3'] = df['PP'] - (df['High'].shift(1) - df['Low'].shift(1))
+    
+    return df
+
+
+def sr_woodie(df):
+    df['PP'] = (df['High'].shift(1) + df['Low'].shift(1) + 2 * df['Open']) / 4
+    df['R1'] = 2 * df['PP'] - df['Low'].shift(1)
+    df['S1'] = 2 * df['PP'] - df['High'].shift(1)
+    df['R2'] = df['PP'] + (df['High'].shift(1) - df['Low'].shift(1))
+    df['S2'] = df['PP'] - (df['High'].shift(1) - df['Low'].shift(1))
+    df['R3'] =  df['High'].shift(1) + 2 * (df['PP'] -  df['Low'].shift(1))
+    df['S3'] =  df['Low'].shift(1) - 2 * (df['High'].shift(1) - df['PP'])
+    df['R4'] = df['R3'] + (df['High'].shift(1) - df['Low'].shift(1))
+    df['S4'] = df['S3'] - (df['High'].shift(1) - df['Low'].shift(1))
+
+    return df
+
+
+def sr_classic(df):
+    df['PP'] = (df['High'].shift(1) + df['Low'].shift(1) + df['Close'].shift(1)) / 3
+    df['R1'] = 2 * df['PP'] - df['Low'].shift(1)
+    df['S1'] = 2 * df['PP'] - df['High'].shift(1)
+    df['R2'] = df['PP'] + (df['High'].shift(1) - df['Low'].shift(1))
+    df['S2'] = df['PP'] - (df['High'].shift(1) - df['Low'].shift(1))
+    df['R3'] = df['PP'] + 2 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['S3'] = df['PP'] - 2 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['R4'] = df['PP'] + 3 * (df['High'].shift(1) - df['Low'].shift(1))
+    df['S4'] = df['PP'] - 3 * (df['High'].shift(1) - df['Low'].shift(1))
+
+    return df
+
+
+def sr_denmark(df):
+    df['X'] = pd.NA
+    df['PP'] = pd.NA
+    df['R1'] = pd.NA
+    df['S1'] = pd.NA
+
+    # Denmark S/R
+    for index, row in df.iterrows():
+        if df['Open'].shift(1) == df['Close'].shift(1):
+            df.loc[index, 'X'] = df['High'].shift(1) + df['Low'].shift(1) + 2 * df['Close'].shift(1)
+        elif df['Close'].shift(1) > df['Open'].shift(1):
+            df.loc[index, 'X'] = 2 * df['High'].shift(1) + df['Low'].shift(1) + df['Close'].shift(1)
+        else:
+            df.loc[index, 'X'] = 2 * df['Low'].shift(1) + df['High'].shift(1) + df['Close'].shift(1)
+            df.loc[index, 'PP'] = df['X'] / 4
+            df.loc[index, 'R1'] = df['X'] / 2 - df['Low'].shift(1)
+            df.loc[index, 'S1'] = df['X'] / 2 - df['High'].shift(1)
+        
+    # IF  OPENprev == CLOSEprev
+    #     X = HIGHprev + LOWprev + 2 * CLOSEprev
+    # ELSE IF CLOSEprev >  OPENprev
+    #     X = 2 * HIGHprev + LOWprev + CLOSEprev
+    # ELSE
+    #     X = 2 * LOWprev + HIGHprev + CLOSEprev
+    #     PP = X / 4
+    #     R1 = X / 2 - LOWprev
+    #     S1 = X / 2 - HIGHprev    
+    return df
+
+def sr_camarilla(df):
+    df['PP'] = (df['High'].shift(1) + df['Low'].shift(1) + df['Close'].shift(1)) / 3
+    df['R1'] = df['Close'].shift(1) + 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 12
+    df['S1'] = df['Close'].shift(1) - 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 12
+    df['R2'] = df['Close'].shift(1) + 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 6
+    df['S2'] = df['Close'].shift(1) - 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 6
+    df['R3'] = df['Close'].shift(1) + 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 4
+    df['S3'] = df['Close'].shift(1) - 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 4
+    df['R4'] = df['Close'].shift(1) + 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 2
+    df['S4'] = df['Close'].shift(1) - 1.1 * (df['High'].shift(1) - df['Low'].shift(1)) / 2    
+    return df
+
