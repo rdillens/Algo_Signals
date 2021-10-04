@@ -45,6 +45,7 @@ def main(ticker=None):
     df = hf.add_price_transform_functions(df)
     df = hf.add_cycle_indicator_functions(df)
     df = hf.add_statistic_functions(df)
+    df = hf.add_support_resistance(df, candle_1d_df)
 
     print(df.head())
 
