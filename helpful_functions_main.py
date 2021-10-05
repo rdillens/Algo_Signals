@@ -471,7 +471,7 @@ def add_trade_signals(df):
     df['Trade Signal'] = df['Sum Patterns'].apply(lambda x: check_sum_value(x))
     df.drop(columns='Sum Patterns', inplace=True)
 
-    return df
+    return df['Open', 'Low', 'High', 'Close', 'Volume', 'Trade Signal']
 
 
 def add_overlap_studies(df):
