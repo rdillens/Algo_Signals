@@ -54,11 +54,11 @@ def main(ticker=None):
         df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
 
-    df = df.dropna()
-    print(list(df.columns))
-    print(list(df.dtypes))
+    # df = df.dropna()
+    # print(list(df.columns))
+    # print(list(df.dtypes))
     # df = df.drop('Previous Date')
-    MLNN.mlnn(df)
+    MLNN.mlnn(df.dropna())
 
 
     return
