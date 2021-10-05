@@ -19,22 +19,22 @@ inspector = sqlalchemy.inspect(engine)
 table_names = inspector.get_table_names()
 
 def mlnn(df):
-    # Create a list of categorical variables 
-    categorical_variables = ['Trade Signal']
-    # Create a OneHotEncoder instance
-    enc = OneHotEncoder(sparse=False)
-    # Encode the categorcal variables using OneHotEncoder
-    encoded_data = enc.fit_transform(df[categorical_variables])
-    # Create a DataFrame with the encoded variables
-    encoded_df = pd.DataFrame(
-        encoded_data,
-        columns = enc.get_feature_names(categorical_variables)
-    )
-    encoded_df.rename(columns={'Trade Signal_-1.0': 'Bearish', 'Trade Signal_0.0': 'None', 'Trade Signal_1.0':'Bullish'}, inplace=True)
-    encoded_df.drop(columns='None', inplace=True)
+    # # Create a list of categorical variables 
+    # categorical_variables = ['Trade Signal']
+    # # Create a OneHotEncoder instance
+    # enc = OneHotEncoder(sparse=False)
+    # # Encode the categorcal variables using OneHotEncoder
+    # encoded_data = enc.fit_transform(df[categorical_variables])
+    # # Create a DataFrame with the encoded variables
+    # encoded_df = pd.DataFrame(
+    #     encoded_data,
+    #     columns = enc.get_feature_names(categorical_variables)
+    # )
+    # encoded_df.rename(columns={'Trade Signal_-1.0': 'Bearish', 'Trade Signal_0.0': 'None', 'Trade Signal_1.0':'Bullish'}, inplace=True)
+    # encoded_df.drop(columns='None', inplace=True)
     
     # Define the features set X and the target set y
-    y = encoded_df['Bearish'].copy()
+    y = df['Trade Signal'].copy()
     X = df.drop(columns=['Trade Signal'])
     # Split the preprocessed data into a training and testing dataset
     # Assign the function a random_state equal to 1
