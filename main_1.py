@@ -1,4 +1,5 @@
 from DLNN_1 import dataframe
+from SVC_1 import dataframe_SVC
 import questionary
 import utils.helpful_functions_1 as hf
 # import shelve
@@ -71,6 +72,8 @@ def main(ticker=None):
     # table_names = inspector.get_table_names()
     # indicators_df = pd.read_sql_table(ticker + '_Indicators', con=engine, index_col='Datetime')
     print(dataframe(dt_start, dt_end, df))
+
+    print(dataframe_SVC(df))
 
     return
 
