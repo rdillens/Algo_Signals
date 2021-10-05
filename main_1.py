@@ -1,4 +1,5 @@
 from DLNN_1 import dataframe
+from SVC_1 import dataframe_SVC
 from LSTM import lstm_df
 from MLNN import mlnn
 import questionary
@@ -74,8 +75,8 @@ def main(ticker=None):
     # indicators_df = pd.read_sql_table(ticker + '_Indicators', con=engine, index_col='Datetime')
     print(mlnn(df))
     print(dataframe(dt_start, dt_end, df))
+    print(dataframe_SVC(df))
     print(lstm_df(df))
-    
     return
 
 if __name__ == "__main__":
