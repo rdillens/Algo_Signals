@@ -12,7 +12,7 @@ from pandas.tseries.offsets import BDay
 
 
 # Create a temporary SQLite database and populate the database with content from the etf.db seed file
-db_connection_string = 'sqlite:///./Resources/product.db'
+database_connection_string = 'sqlite:///../Resources/portfolio.db'
 shelf_path = './Resources/shelf'
 market_list = ['stock', 'crypto']
 
@@ -463,15 +463,15 @@ def add_trade_signals(df):
     def check_sum_value(sum_value):
         if sum_value > threshold_value:
             return 1
-        elif sum_value < -threshold_value:
-            return -1
+        # elif sum_value < -threshold_value:
+        #     return -1
         else:
             return 0.0
 
     df['Trade Signal'] = df['Sum Patterns'].apply(lambda x: check_sum_value(x))
     df.drop(columns='Sum Patterns', inplace=True)
 
-    return df
+    return df['Open', 'Low', 'High', 'Close', 'Volume', 'Trade Signal']
 
 
 def add_overlap_studies(df):

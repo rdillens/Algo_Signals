@@ -32,6 +32,14 @@ def lstm_df(df):
     test_size=len(y_scaled)-training_size 
     train_data,test_data=y_scaled[0:training_size,:],y_scaled[training_size:len(y_scaled),:1]
         
+    def create_dataset(dataset, time_step=1):
+        dataX, dataY = [], []
+        for i in range(len(dataset)-time_step-1):
+            a = dataset[i:(i+time_step), 0]   ###i=0, 0,1,2,3-----99   100 
+            dataX.append(a)
+            dataY.append(dataset[i + time_step, 0])
+        return np.array(dataX), np.array(dataY)
+
     #Setting up the timesteps
     time_step = 5
     X_train, y_train = create_dataset(train_data, time_step)
@@ -41,13 +49,13 @@ def lstm_df(df):
     X_train =X_train.reshape(X_train.shape[0],X_train.shape[1] , 1)
     X_test = X_test.reshape(X_test.shape[0],X_test.shape[1] , 1)
 
-    def create_dataset(dataset, time_step=1):
-        dataX, dataY = [], []
-        for i in range(len(dataset)-time_step-1):
-            a = dataset[i:(i+time_step), 0]   ###i=0, 0,1,2,3-----99   100 
-            dataX.append(a)
-            dataY.append(dataset[i + time_step, 0])
-        return np.array(dataX), np.array(dataY)
+    # def create_dataset(dataset, time_step=1):
+    #     dataX, dataY = [], []
+    #     for i in range(len(dataset)-time_step-1):
+    #         a = dataset[i:(i+time_step), 0]   ###i=0, 0,1,2,3-----99   100 
+    #         dataX.append(a)
+    #         dataY.append(dataset[i + time_step, 0])
+    #     return np.array(dataX), np.array(dataY)
 
     #Defining layers and features for the ML model to process the information
     neurons = 50
@@ -93,6 +101,19 @@ def lstm_df(df):
     testPredictPlot[:, :] = np.nan
     testPredictPlot[len(train_predict)+(look_back*2)+1:len(y_scaled)-1, :] = test_predict
 
+    # plot baseline and predictions
+    plt.plot(scaler.inverse_transform(y_scaled))
+    plt.plot(trainPredictPlot)
+    plt.plot(testPredictPlot)
+    plt.show()
+
+
+    #converting the information to a list that has been scaled from 0 - 1 from earlier
+    test_values = test_size - timesteps
+
+    x_input=test_data[test_values:].reshape(1,-1)
+    temp_input=list(x_input)
+    temp_input=temp_input[0].tolist()
 
     # demonstrate prediction for next 3 Ticks
     lst_output=[]
