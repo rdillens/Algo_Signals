@@ -59,8 +59,8 @@ def main(ticker=None):
     df = hf.add_cycle_indicator_functions(df)
     df = hf.add_statistic_functions(df)
     # df = hf.add_support_resistance(df, candle_1d_df)
-
-    print(df.head())
+    df.dropna(inplace=True)
+    print(df.tail())
 
     if(questionary.confirm("Save to database?").ask()):
         df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')

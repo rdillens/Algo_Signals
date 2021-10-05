@@ -22,7 +22,7 @@ def dataframe(dt_start, dt_end, df):
     # plot_df = df.loc[plot_start:plot_end,:].reset_index()
     # plot_df = indicators_df.loc[plot_date,:].reset_index()
     # plot_df = indicators_df.iloc[-3000:,:].reset_index()
-    df.head()
+    df.tail()
     df.rename(
         columns={
             'Datetime': 'date',
