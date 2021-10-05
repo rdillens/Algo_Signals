@@ -12,7 +12,7 @@ from pandas.tseries.offsets import BDay
 
 
 # Create a temporary SQLite database and populate the database with content from the etf.db seed file
-database_connection_string = 'sqlite:///../Resources/portfolio.db'
+db_connection_string = 'sqlite:///./Resources/product.db'
 shelf_path = './Resources/shelf'
 market_list = ['stock', 'crypto']
 
