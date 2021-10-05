@@ -9,6 +9,7 @@ import concurrent.futures
 import utils.ta_lib_indicators as ti
 import talib
 from pandas.tseries.offsets import BDay
+from datetime import date
 
 
 # Create a temporary SQLite database and populate the database with content from the etf.db seed file
@@ -436,7 +437,36 @@ def get_minute_candles(ticker):
     candle_df.set_index('Datetime', inplace=True, drop=True)
     # print(candle_df)
     candle_df = candle_df[['Open', 'High', 'Low', 'Close', 'Volume']]
-    return candle_df
+    return candle_df, dt_end, dt_start
+
+
+
+# def sub_years(years):
+#     today = date.today()
+#     try:
+#         return today.replace(year = today.year - years)
+#     except ValueError:
+#         return today + (date(today.year + years, 1, 1) - date(today.year, 1, 1))
+
+
+# def start_end():
+#     # years = 10   
+#     today = date.today()
+#     # try:
+#     #     return today.replace(year = today.year - years)
+#     # except ValueError:
+#     #     return today + (date(today.year + years, 1, 1) - date(today.year, 1, 1))
+#     # # historical data - define START and END dates
+#     # # to calculate the start_date we must use the sub_years function defined above to get today's date and subtract 10 years
+#     # # then using the .strftime('%Y-%m-%d') we format it so that it can be passed to yahoo finance
+
+#     start_date = sub_years(10).strftime('%Y-%m-%d')
+
+#     # # for the end_date we just have to reformat the today variable with the .strftime('%Y-%m-%d') we format it so that it can be passed to yahoo finance 
+#     end_date = today.strftime('%Y-%m-%d')
+
+#     return start_date, end_date 
+
 
 
 def add_trade_signals(df):
@@ -463,8 +493,8 @@ def add_trade_signals(df):
     def check_sum_value(sum_value):
         if sum_value > threshold_value:
             return 1
-        elif sum_value < -threshold_value:
-            return -1
+        # elif sum_value < -threshold_value:
+        #     return -1
         else:
             return 0.0
 
@@ -486,7 +516,7 @@ def add_overlap_studies(df):
                     df['Close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
             if f == 'DEMA':
                 # real = DEMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=30) # wish list item
             if f == 'EMA':
                 # real = EMA(close, timeperiod=30)
                 df[f] = function(df['Close'], timeperiod=30)
