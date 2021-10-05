@@ -7,6 +7,7 @@ import pandas as pd
 import sqlalchemy
 from pathlib import Path
 import os
+import MLNN
 
 path = Path("./Resources")
 if os.path.isdir(path):
@@ -35,7 +36,7 @@ def main(ticker=None):
     candle_1m_df.to_sql(ticker + "_1_Min_Candles",
                         con=engine, if_exists='replace')
 
-    df = hf.add_support_resistance(candle_1m_df, candle_1d_df)
+    # df = hf.add_support_resistance(candle_1m_df, candle_1d_df)
 
     df = hf.add_trade_signals(candle_1m_df)
     df = hf.add_overlap_studies(df)
@@ -45,14 +46,24 @@ def main(ticker=None):
     df = hf.add_price_transform_functions(df)
     df = hf.add_cycle_indicator_functions(df)
     df = hf.add_statistic_functions(df)
-    df = hf.add_support_resistance(df, candle_1d_df)
+
 
     print(df.head())
 
     if(questionary.confirm("Save to database?").ask()):
         df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
+
+    df = df.dropna()
+    print(list(df.columns))
+    print(list(df.dtypes))
+    # df = df.drop('Previous Date')
+    MLNN.mlnn(df)
+
+
     return
+
+
 
 
 if __name__ == "__main__":
