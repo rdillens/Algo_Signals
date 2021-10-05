@@ -67,7 +67,7 @@ def mlnn(df):
     # Compile the Sequential model
     nn.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
     # Fit the model using 50 epochs and the training data
-    model = nn.fit(X_train_scaled, y_train, epochs=50, verbose=1)
+    model = nn.fit(X_train_scaled, y_train, epochs=50, verbose=0)
 
     print("Model Results")
     # Evaluate the model loss and accuracy metrics using the evaluate method and the test data

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import questionary
 import shelve
 import pandas as pd
-import sqlalchemy
+# import sqlalchemy
 import utils.finnhubIO as fh
 import yfinance as yf
 import concurrent.futures
@@ -126,6 +126,27 @@ def choose_functions(function_dict, function_name, default=None):
     function_index_list = function_df[function_df[function_name].isin(
         function_list)].index
     return function_index_list
+
+
+def choose_function(function_dict, function_name, default=None):
+    function_list = []
+    function_df = pd.DataFrame(
+        list(function_dict.items()),
+        columns=['Index', function_name],
+    )
+    function_df = function_df.set_index('Index')
+    functions_list = list(function_df[function_name])
+    choice = choose_from_list(
+        functions_list,
+        default=default,
+        prompt_string=f"Choose a {function_name}:"
+    )
+    functions_list.remove(choice)
+    function_list.append(choice)
+
+    function_index_list = function_df[function_df[function_name].isin(
+        function_list)].index
+    return function_index_list[0]
 
 
 def choose_from_list(
@@ -474,6 +495,21 @@ def add_trade_signals(df):
     return df
 
 
+# SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, T3
+# ma_types_list = ["SMA", "EMA", "WMA", "DEMA",
+#                         "TEMA", "TRIMA", "KAMA", "MAMA", "T3"]
+ma_types_list = ["SMA", "EMA", "WMA", "DEMA",
+                        "TEMA", "TRIMA", "KAMA"]
+# ma_types_dict = ti.overlap_studies[[ma_types_list]]
+ma_types_dict = { ma_type: ti.overlap_studies[ma_type] for ma_type in ma_types_list }
+
+
+def choose_ma_type():
+    ma_type = choose_function(ma_types_dict, 'Moving Average')
+    print(ma_type)
+    return ma_types_list.index(ma_type)
+
+
 def add_overlap_studies(df):
     if(questionary.confirm('Add overlap study?').ask()):
         function_list = choose_functions(
@@ -482,29 +518,35 @@ def add_overlap_studies(df):
             function = getattr(talib, f)
             if f == 'BBANDS':
                 # upperband, middleband, lowerband = BBANDS(close, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+                tp = get_timeperiod(f'Get time period for {ti.overlap_studies[f]}')
+                nbdevup = get_timeperiod(f'Get nbdevup for {ti.overlap_studies[f]}')
+                nbdevdn = get_timeperiod(f'Get nbdevdn for {ti.overlap_studies[f]}')
+                ma = choose_ma_type()
                 df['Upper Band'], df['Middle Band'], df['Lower Band'] = function(
-                    df['Close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+                    df['Close'], timeperiod=tp, nbdevup=nbdevup, nbdevdn=nbdevdn, matype=ma)
             if f == 'DEMA':
                 # real = DEMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'EMA':
                 # real = EMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'HT_TRENDLINE':
                 # real = HT_TRENDLINE(close)
                 df[f] = function(df['Close'])
             if f == 'KAMA':
                 # real = KAMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
 
             # There are only 8 types of moving averages, enumerated 0 to 8:
-            # SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, T3
-            ma_types = ["SMA", "EMA", "WMA", "DEMA",
-                        "TEMA", "TRIMA", "KAMA", "MAMA", "T3"]
 
             if f == 'MA':
                 # real = MA(close, timeperiod=30, matype=0)
-                df[f] = function(df['Close'], timeperiod=30, matype=0)
+                tp = get_timeperiod(f'Get time period for {f}')
+                ma = choose_ma_type()
+                df[f] = function(df['Close'], timeperiod=tp, matype=ma)
             if f == 'MAMA':
                 # mama, fama = MAMA(close, fastlimit=0.5, slowlimit=0.05)
                 df['MAMA'], df['FAMA'] = function(
@@ -518,10 +560,12 @@ def add_overlap_studies(df):
 
             if f == 'MIDPOINT':
                 # real = MIDPOINT(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'MIDPRICE':
                 # real = MIDPRICE(high, low, timeperiod=30)
-                df[f] = function(df['High'], df['Low'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], timeperiod=tp)
             if f == 'SAR':
                 # real = SAR(high, low, acceleration=0, maximum=0)
                 df[f] = function(df['High'], df['Low'],
@@ -532,19 +576,24 @@ def add_overlap_studies(df):
                                  accelerationmaxlong=0, accelerationinitshort=0, accelerationshort=0, accelerationmaxshort=0)
             if f == 'SMA':
                 # real = SMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'T3':
                 # real = T3(close, timeperiod=5, vfactor=0)
-                df[f] = function(df['Close'], timeperiod=5, vfactor=0)
+                tp = get_timeperiod(f'Get time period for {f}')
+                vfactor = get_timeperiod(f'Get v factor for {f}')
+                df[f] = function(df['Close'], timeperiod=tp, vfactor=vfactor)
             if f == 'TEMA':
                 # real = TEMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'TRIMA':
                 # real = TRIMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'WMA':
                 # real = WMA(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
 
     return df
 
@@ -557,113 +606,162 @@ def add_momentum_indicators(df):
             function = getattr(talib, f)
             if f == 'ADX':
                 # real = ADX(high, low, close, timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
                 df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                                 df['Close'], timeperiod=tp)
             if f == 'ADXR':
                 # real = ADXR(high, low, close, timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
                 df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                                 df['Close'], timeperiod=tp)
             if f == 'APO':
                 # real = APO(close, fastperiod=12, slowperiod=26, matype=0)
-                df[f] = function(df['Close'], fastperiod=12,
-                                 slowperiod=26, matype=0)
+                fp = get_timeperiod(f'Get fast time period for {f}')
+                sp = get_timeperiod(f'Get slow time period for {f}')
+                ma = choose_ma_type()
+                df[f] = function(df['Close'], fastperiod=fp,
+                                 slowperiod=sp, matype=ma)
             if f == 'AROON':
                 # aroondown, aroonup = AROON(high, low, timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
                 df['AROONDOWN'], df['AROONUP'] = function(
-                    df['High'], df['Low'], timeperiod=14)
+                    df['High'], df['Low'], timeperiod=tp)
             if f == 'AROONOSC':
                 # real = AROONOSC(high, low, timeperiod=14)
-                df[f] = function(df['High'], df['Low'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], timeperiod=tp)
             if f == 'BOP':
                 # real = BOP(open, high, low, close)
                 df[f] = function(df["Open"], df['High'],
                                  df['Low'], df['Close'])
             if f == 'CCI':
                 # real = CCI(high, low, close, timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
                 df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                                 df['Close'], timeperiod=tp)
             if f == 'CMO':
                 # real = CMO(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'DX':
                 # real = DX(high, low, close, timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
                 df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                                 df['Close'], timeperiod=tp)
             if f == 'MACD':
                 # macd, macdsignal, macdhist = MACD(close, fastperiod=12, slowperiod=26, signalperiod=9)
+                fastp = get_timeperiod(f'Get fast time period for {f}')
+                slowp = get_timeperiod(f'Get slow time period for {f}')
+                signalp = get_timeperiod(f'Get signal period for {f}')
                 df['MACD'], df['MACD_SIGNAL'], df['MACD_HIST'] = function(
-                    df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+                    df['Close'], fastperiod=fastp, slowperiod=slowp, signalperiod=signalp)
             if f == 'MACDEXT':
                 # macd, macdsignal, macdhist = MACDEXT(close, fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0)
+                fastp = get_timeperiod(f'Get fast time period for {f}')
+                slowp = get_timeperiod(f'Get slow time period for {f}')
+                signalp = get_timeperiod(f'Get signal period for {f}')
+                fastma = choose_ma_type()
+                slowma = choose_ma_type()
+                signalma = choose_ma_type()
                 df['MACDEXT'], df['MACDEXT_SIGNAL'], df['MACDEXT_HIST'] = function(
-                    df['Close'], fastperiod=12, fastmatype=0, slowperiod=26, slowmatype=0, signalperiod=9, signalmatype=0)
+                    df['Close'], 
+                    fastperiod=fastp, fastmatype=fastma, 
+                    slowperiod=slowp, slowmatype=slowma, 
+                    signalperiod=signalp, signalmatype=signalma
+                )
             if f == 'MACDFIX':
                 # macd, macdsignal, macdhist = MACDFIX(close, signalperiod=9)
+                sp = get_timeperiod(f'Get signal period for {f}')
                 df['MACDFIX'], df['MACDFIX_SIGNAL'], df['MACDFIX_HIST'] = function(
-                    df['Close'], signalperiod=9)
+                    df['Close'], signalperiod=sp)
             if f == 'MFI':
                 # real = MFI(high, low, close, volume, timeperiod=14)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], df['Volume'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], df['Volume'], timeperiod=tp)
             if f == 'MINUS_DI':
                 # real = MINUS_DI(high, low, close, timeperiod=14)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=tp)
             if f == 'MINUS_DM':
                 # real = MINUS_DM(high, low, timeperiod=14)
-                df[f] = function(df['High'], df['Low'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], timeperiod=tp)
             if f == 'MOM':
                 # real = MOM(close, timeperiod=10)
-                df[f] = function(df['Close'], timeperiod=10)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'PLUS_DI':
                 # real = PLUS_DI(high, low, close, timeperiod=14)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=tp)
             if f == 'PLUS_DM':
                 # real = PLUS_DM(high, low, timeperiod=14)
-                df[f] = function(df['High'], df['Low'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], timeperiod=tp)
             if f == 'PPO':
                 # real = PPO(close, fastperiod=12, slowperiod=26, matype=0)
-                df[f] = function(df['Close'], fastperiod=12,
-                                 slowperiod=26, matype=0)
+                fp = get_timeperiod(f'Get fast time period for {f}')
+                sp = get_timeperiod(f'Get slow time period for {f}')
+                ma = choose_ma_type()
+                df[f] = function(df['Close'], fastperiod=fp, slowperiod=sp, matype=ma)
             if f == 'ROC':
                 # real = ROC(close, timeperiod=10)
-                df[f] = function(df['Close'], timeperiod=10)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'ROCP':
                 # real = ROCP(close, timeperiod=10)
-                df[f] = function(df['Close'], timeperiod=10)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'ROCR':
                 # real = ROCR(close, timeperiod=10)
-                df[f] = function(df['Close'], timeperiod=10)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'ROCR100':
                 # real = ROCR100(close, timeperiod=10)
-                df[f] = function(df['Close'], timeperiod=10)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'RSI':
                 # real = RSI(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'STOCH':
                 # slowk, slowd = STOCH(high, low, close, fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+                fkp = get_timeperiod(f'Get fast k period for {f}')
+                skp = get_timeperiod(f'Get slow k period for {f}')
+                sdp = get_timeperiod(f'Get slow d period for {f}')
+                slowkma = choose_ma_type()
+                slowdma = choose_ma_type()
                 df['STOCH_SLOWK'], df['STOCH_SLOWD'] = function(
-                    df['High'], df['Low'], df['Close'], fastk_period=5, slowk_period=3, slowk_matype=0, slowd_period=3, slowd_matype=0)
+                    df['High'], df['Low'], df['Close'], fastk_period=fkp, slowk_period=skp, slowk_matype=slowkma, slowd_period=sdp, slowd_matype=slowdma)
             if f == 'STOCHF':
                 # fastk, fastd = STOCHF(high, low, close, fastk_period=5, fastd_period=3, fastd_matype=0)
+                fkp = get_timeperiod(f'Get fast k period for {f}')
+                fdp = get_timeperiod(f'Get fast d period for {f}')
+                fastdma = choose_ma_type()
                 df['STOCHF_FASTK'], df['STOCHF_FASTD'] = function(
-                    df['High'], df['Low'], df['Close'], fastk_period=5, fastd_period=3, fastd_matype=0)
+                    df['High'], df['Low'], df['Close'], fastk_period=fkp, fastd_period=fdp, fastd_matype=fastdma)
             if f == 'STOCHRSI':
                 # fastk, fastd = STOCHRSI(close, timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+                tp = get_timeperiod(f'Get time period for {f}')
+                fkp = get_timeperiod(f'Get fast k period for {f}')
+                fdp = get_timeperiod(f'Get fast d period for {f}')
+                fastdma = choose_ma_type()
                 df['STOCHRSI_FASTK'], df['STOCHRSI_FASTD'] = function(
-                    df['Close'], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+                    df['Close'], timeperiod=tp, fastk_period=fkp, fastd_period=fdp, fastd_matype=fastdma)
             if f == 'TRIX':
                 # real = TRIX(close, timeperiod=30)
-                df[f] = function(df['Close'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'ULTOSC':
                 # real = ULTOSC(high, low, close, timeperiod1=7, timeperiod2=14, timeperiod3=28)
-                df[f] = function(df['High'], df['Low'], df['Close'],
-                                 timeperiod1=7, timeperiod2=14, timeperiod3=28)
+                tp1 = get_timeperiod(f'Get time period 1 for {f}')
+                tp2 = get_timeperiod(f'Get time period 2 for {f}')
+                tp3 = get_timeperiod(f'Get time period 3 for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod1=tp1, timeperiod2=tp2, timeperiod3=tp3)
             if f == 'WILLR':
                 # real = WILLR(high, low, close, timeperiod=14)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=tp)
 
     return df
 
@@ -676,12 +774,12 @@ def add_volume_indicators(df):
             function = getattr(talib, f)
             if f == 'AD':
                 # real = AD(high, low, close, volume)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], df['Volume'])
+                df[f] = function(df['High'], df['Low'], df['Close'], df['Volume'])
             if f == 'ADOSC':
                 # real = ADOSC(high, low, close, volume, fastperiod=3, slowperiod=10)
-                df[f] = function(df['High'], df['Low'], df['Close'],
-                                 df['Volume'], fastperiod=3, slowperiod=10)
+                fp = get_timeperiod(f'Get fast time period for {f}')
+                sp = get_timeperiod(f'Get slow time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], df['Volume'], fastperiod=fp, slowperiod=sp)
             if f == 'OBV':
                 # real = OBV(close, volume)
                 df[f] = function(df['Close'], df['Volume'])
@@ -696,12 +794,12 @@ def add_volatility_indicators(df):
             function = getattr(talib, f)
             if f == 'ATR':
                 # real = ATR(high, low, close, timeperiod=14)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=tp)
             if f == 'NATR':
                 # real = NATR(high, low, close, timeperiod=14)
-                df[f] = function(df['High'], df['Low'],
-                                 df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], df['Close'], timeperiod=tp)
             if f == 'TRANGE':
                 # real = TRANGE(high, low, close)
                 df[f] = function(df['High'], df['Low'], df['Close'])
@@ -716,8 +814,7 @@ def add_price_transform_functions(df):
             function = getattr(talib, f)
             if f == 'AVGPRICE':
                 # real = AVGPRICE(open, high, low, close)
-                df[f] = function(df['Open'], df['High'],
-                                 df['Low'], df['Close'])
+                df[f] = function(df['Open'], df['High'], df['Low'], df['Close'])
             if f == 'MEDPRICE':
                 # real = MEDPRICE(high, low)
                 df[f] = function(df['High'], df['Low'])
@@ -762,33 +859,45 @@ def add_statistic_functions(df):
             function = getattr(talib, f)
             if f == 'BETA':
                 # real = BETA(high, low, timeperiod=5)
-                df[f] = function(df['High'], df['Low'], timeperiod=5)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], timeperiod=tp)
             if f == 'CORREL':
                 # real = CORREL(high, low, timeperiod=30)
-                df[f] = function(df['High'], df['Low'], timeperiod=30)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['High'], df['Low'], timeperiod=tp)
             if f == 'LINEARREG':
                 # real = LINEARREG(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'LINEARREG_ANGLE':
                 # real = LINEARREG_ANGLE(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'LINEARREG_INTERCEPT':
                 # real = LINEARREG_INTERCEPT(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'LINEARREG_SLOPE':
                 # real = LINEARREG_SLOPE(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'STDDEV':
                 # real = STDDEV(close, timeperiod=5, nbdev=1)
-                df[f] = function(df['Close'], timeperiod=5, nbdev=1)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp, nbdev=1)
             if f == 'TSF':
                 # real = TSF(close, timeperiod=14)
-                df[f] = function(df['Close'], timeperiod=14)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp)
             if f == 'VAR':
                 # real = VAR(close, timeperiod=5, nbdev=1)
-                df[f] = function(df['Close'], timeperiod=5, nbdev=1)
+                tp = get_timeperiod(f'Get time period for {f}')
+                df[f] = function(df['Close'], timeperiod=tp, nbdev=1)
     return df
 
+
+def get_timeperiod(question_text="Enter time period:"):
+    return int(questionary.text(question_text).ask())
 
 def check_b_date(check_date, date_list):
     if (check_date in date_list):
