@@ -242,14 +242,11 @@ def svc(df):
     cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
     print(cr, type(cr))
 
-
     return 
 
 
 #Function to call to the main.py for lstm
 def lstm(df):
-
-
     #defining the dataframe for testing and the targeted results
     y = df['Trade Signal']
     scaler=MinMaxScaler(feature_range=(0,1))
