@@ -1,5 +1,7 @@
 from DLNN_1 import dataframe
-from SVC_1 import dataframe_SVC
+# from MLNN import svc
+import MLNN
+from SVC_1 import svc
 from LSTM import lstm_df
 from MLNN_copy import mlnn
 import questionary
@@ -68,15 +70,41 @@ def main(ticker=None):
     if(questionary.confirm("Save to database?").ask()):
         df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
-    # DLNN
-    # Inspector and engine functions
-    # inspector = sqlalchemy.inspect(engine)
-    # table_names = inspector.get_table_names()
-    # indicators_df = pd.read_sql_table(ticker + '_Indicators', con=engine, index_col='Datetime')
-    print(mlnn(df))
-    print(dataframe(dt_start, dt_end, df))
-    print(dataframe_SVC(df))
-    print(lstm_df(df))
+    
+
+    mlnn_model_loss, mlnn_model_accuracy = mlnn(df)
+    
+    dlnn_summary, dlnn_model_loss, dlnn_model_accuracy = dataframe(dt_start, dt_end, df)
+    
+    svc_results, svc_conf_matrix, svc_class_report = svc(df)
+
+    lstm_RMSE = lstm_df(df)
+
+    
+    print(80*'-')
+    print(f"Shallow Neural Network: 1 input layer, 1 output layer.")
+    print(f"Binary clasifier identifying bullish signals, 0 or 1 only.")    
+    print("Model Results")
+    print(f"Loss: {mlnn_model_loss}, Accuracy: {mlnn_model_accuracy}")
+
+    print(80*'-')
+    print(f"Deep Neural Network: 1 input layer, 1 hidden layer, 1 output layer.")
+    print(f"Binary clasifier identifying bullish signals, 0 or 1 only.")
+    print(dlnn_summary)
+    print(f"Loss: {dlnn_model_loss}, Accuracy: {dlnn_model_accuracy}")
+
+    print(80*'-')
+    print(f"Support Vector Classification")
+    print(f"Binary clasifier identifying bullish signals, 0 or 1 only.")
+    print(svc_results)
+    print(svc_conf_matrix, svc_class_report)
+
+    print(80*'-')
+    print(f"Long Short Term Memory")
+    print(f"**Waiting on Andrews Description**.")
+    print(f"RMSE: {lstm_RMSE}")
+    # print(svc_conf_matrix, svc_class_report)
+
     return
 
 if __name__ == "__main__":
