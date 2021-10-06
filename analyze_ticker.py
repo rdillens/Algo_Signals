@@ -9,16 +9,16 @@ from pathlib import Path
 import os
 import MLNN
 
-path = Path("./Resources")
-if os.path.isdir(path):
-    print('Yes')
-else:
-    os.makedirs(path)
-    print('No')
+# path = Path("./Resources")
+# if os.path.isdir(path):
+#     print('Yes')
+# else:
+#     os.makedirs(path)
+#     print('No')
 
-db_connection_string = 'sqlite:///./Resources/product.db'
+# db_connection_string = 'sqlite:///./Resources/product.db'
 
-engine = sqlalchemy.create_engine(db_connection_string)
+# engine = sqlalchemy.create_engine(db_connection_string)
 
 
 def main(ticker=None):
@@ -26,15 +26,15 @@ def main(ticker=None):
         ticker = hf.input_ticker()
 
     product_df = hf.process_ticker_info(ticker)
-    product_df.to_sql(ticker + "_Info", con=engine, if_exists='replace')
+    # product_df.to_sql(ticker + "_Info", con=engine, if_exists='replace')
 
     candle_1d_df = hf.process_ticker_hist(ticker, interval='1d')
-    candle_1d_df.to_sql(ticker + "_1_Day_Candles",
-                        con=engine, if_exists='replace')
+    # candle_1d_df.to_sql(ticker + "_1_Day_Candles",
+    #                     con=engine, if_exists='replace')
 
     candle_1m_df = hf.get_minute_candles(ticker)
-    candle_1m_df.to_sql(ticker + "_1_Min_Candles",
-                        con=engine, if_exists='replace')
+    # candle_1m_df.to_sql(ticker + "_1_Min_Candles",
+    #                     con=engine, if_exists='replace')
 
     # df = hf.add_support_resistance(candle_1m_df, candle_1d_df)
 
@@ -51,8 +51,8 @@ def main(ticker=None):
     df = df.dropna()
     print(df.head())
 
-    if(questionary.confirm("Save to database?").ask()):
-        df.to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
+    # if(questionary.confirm("Save to database?").ask()):
+    #     df.to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
 
 

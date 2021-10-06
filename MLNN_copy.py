@@ -69,10 +69,10 @@ def mlnn(df):
     # Fit the model using 50 epochs and the training data
     model = nn.fit(X_train_scaled, y_train, epochs=50, verbose=0)
 
-    print("Model Results")
+    # print("Model Results")
     # Evaluate the model loss and accuracy metrics using the evaluate method and the test data
     model_loss, model_accuracy = nn.evaluate(X_test_scaled, y_test, verbose=True)
     # Display the model loss and accuracy results
-    print(f"Loss: {model_loss}, Accuracy: {model_accuracy}")
+    # print(f"Loss: {model_loss}, Accuracy: {model_accuracy}")
 
-    return
+    return model_loss, model_accuracy

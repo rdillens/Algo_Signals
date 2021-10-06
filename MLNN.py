@@ -1,5 +1,5 @@
 import pandas as pd
-# from pathlib import Path
+from pathlib import Path
 # import tensorflow as tf
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
@@ -35,11 +35,11 @@ def mlnn(df, output_nodes=None):
         columns = enc.get_feature_names(categorical_variables)
     )
     encoded_df.rename(columns={'Trade Signal_-1.0': 'Bearish', 'Trade Signal_0.0': 'None', 'Trade Signal_1.0':'Bullish'}, inplace=True)
-    encoded_df.drop(columns='None', inplace=True)
+    # encoded_df.drop(columns='None', inplace=True)
     
     # Define the features set X and the target set y
     if output_nodes == 2:
-        y = encoded_df[['Bullish', 'Bearish']]
+        y = encoded_df[['Bearish', 'None', 'Bullish']]
     else:
         y = encoded_df['Bullish']
         output_nodes = 1
@@ -82,20 +82,32 @@ def mlnn(df, output_nodes=None):
     print(f"Loss: {model_loss}, Accuracy: {model_accuracy}")
 
     y_pred = nn.predict(X_test_scaled)
+
+    # print(y_test)
+    # print(X_test_scaled)
+    # print(y_pred)
     y_pred_df = pd.DataFrame(y_pred)
+    # print(y_pred_df.head())
     y_test_df = pd.DataFrame(y_test).reset_index(drop=True)
 
+
+
     results = pd.concat([y_test_df, y_pred_df], axis=1)
+    # print(results.head())
     results.rename(columns={'Bullish': 'Actual', 0: 'Predictions'}, inplace=True)
+    # results.to_csv(Path('./Resources/results.csv'))
     results['Predictions'] = results['Predictions'].apply(lambda x: int(round(x, 0)))
     results['Actual'] = results['Actual'].apply(lambda x: int(round(x, 0)))
+
+    # print(results.value_counts())
 
     # print(results)
     # print(results['Actual'].value_counts())
     # print(results['Predictions'].value_counts())
-    print(confusion_matrix(results['Actual'], results['Predictions']))
-    print(classification_report(results['Actual'], results['Predictions'], zero_division='warn'))
-
+    cm = confusion_matrix(results['Actual'], results['Predictions'])
+    print(cm, type(cm))
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr, type(cr))
     return
     
 
@@ -169,8 +181,10 @@ def dlnn(df, output_nodes=None):
     # print(results)
     # print(confusion_matrix(y_test, y_pred))
     # print(classification_report(y_test, y_pred, zero_division='warn'))
-    print(confusion_matrix(results['Actual'], results['Predictions']))
-    print(classification_report(results['Actual'], results['Predictions'], zero_division='warn'))
+    cm = confusion_matrix(results['Actual'], results['Predictions'])
+    print(cm, type(cm))
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr, type(cr))
 
     return
 
@@ -210,7 +224,13 @@ def svc(df):
     results = pd.DataFrame({"Predictions": y_pred, "Actual":y_test}).reset_index(drop=True)
 
     # print(results)
-    print(confusion_matrix(y_test, y_pred))
-    print(classification_report(y_test, y_pred, zero_division='warn'))
+    # print(confusion_matrix(y_test, y_pred))
+    # print(classification_report(y_test, y_pred, zero_division='warn'))
+
+    cm = confusion_matrix(results['Actual'], results['Predictions'])
+    print(cm, type(cm))
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr, type(cr))
+
 
     return 

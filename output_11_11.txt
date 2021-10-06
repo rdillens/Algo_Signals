@@ -1,0 +1,240 @@
+$ python main_1.py
+2021-10-05 23:00:47.890415: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+2021-10-05 23:00:47.890638: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Finnhub API OK
+Yes
+ What stock ticker should I look up? TSLA
+Ok, let's look at TSLA.
+TSLA
+[*********************100%***********************]  1 of 1 completed
+2021-10-05 23:01:01
+Getting TSLAcandles from 1318132861 to 1633492861
+ Choose a Pattern: Doji
+? Add another pattern? Yes
+ Choose a Pattern: Two Crows
+? Add another pattern? Yes
+ Choose a Pattern: Concealing Baby Swallow
+? Add another pattern? No
+? Add overlap study? No
+? Add momentum indicator? No
+? Add volume indicator? No
+? Add volatility indicator? No
+? Add price transform function? No
+? Add cycle indicator? No
+? Add statistic function? No
+                       Open    High     Low   Close  Volume  Trade Signal
+Datetime
+2021-10-05 18:55:00  780.63  780.63  780.50  780.50    2816           0.0
+2021-10-05 18:56:00  780.51  780.51  780.25  780.25    1096           0.0
+2021-10-05 18:57:00  780.06  780.26  780.06  780.26    2080           0.0
+2021-10-05 18:58:00  780.26  780.26  780.00  780.00    3977           0.0
+2021-10-05 18:59:00  779.94  780.00  779.94  780.00     729           0.0
+? Save to database? Yes
+2021-10-05 23:01:16.821922: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+2021-10-05 23:01:16.822953: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cublas64_11.dll'; dlerror: cublas64_11.dll not found
+2021-10-05 23:01:16.823775: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cublasLt64_11.dll'; dlerror: cublasLt64_11.dll not found
+2021-10-05 23:01:16.824966: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cufft64_10.dll'; dlerror: cufft64_10.dll not found
+2021-10-05 23:01:16.826179: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'curand64_10.dll'; dlerror: curand64_10.dll not found
+2021-10-05 23:01:16.827331: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cusolver64_11.dll'; dlerror: cusolver64_11.dll not found
+2021-10-05 23:01:16.828303: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cusparse64_11.dll'; dlerror: cusparse64_11.dll not found
+2021-10-05 23:01:16.829233: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cudnn64_8.dll'; dlerror: cudnn64_8.dll not found
+2021-10-05 23:01:16.829345: W tensorflow/core/common_runtime/gpu/gpu_device.cc:1835] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+2021-10-05 23:01:16.829774: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+dense (Dense)                (None, 3)                 18
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 4
+=================================================================
+Total params: 22
+Trainable params: 22
+Non-trainable params: 0
+_________________________________________________________________
+2021-10-05 23:01:16.907028: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+102/102 [==============================] - 0s 410us/step - loss: 0.4821 - accuracy: 0.7326
+C:\Users\bbish\anaconda3\envs\dev\lib\site-packages\mplfinance\_arg_validators.py:45: UserWarning:
+
+ =================================================================
+
+   WARNING: YOU ARE PLOTTING SO MUCH DATA THAT IT MAY NOT BE
+            POSSIBLE TO SEE DETAILS (Candles, Ohlc-Bars, Etc.)
+   For more information see:
+   - https://github.com/matplotlib/mplfinance/wiki/Plotting-Too-Much-Data
+
+   TO SILENCE THIS WARNING, set `type='line'` in `mpf.plot()`
+   OR set kwarg `warn_too_much_data=N` where N is an integer
+   LARGER than the number of data points you want to plot.
+
+ ================================================================
+  category=UserWarning)
+ 0.0    9506
+ 1.0    3516
+-1.0       3
+Name: Trade Signal, dtype: int64
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+dense_2 (Dense)              (None, 3)                 18
+_________________________________________________________________
+dense_3 (Dense)              (None, 2)                 8
+_________________________________________________________________
+dense_4 (Dense)              (None, 1)                 3
+=================================================================
+Total params: 29
+Trainable params: 29
+Non-trainable params: 0
+_________________________________________________________________
+None
+102/102 [==============================] - 0s 407us/step - loss: 0.4793 - accuracy: 0.8118
+Loss: 0.4792506992816925, Accuracy: 0.8117899894714355
+None
+[[2387    0]
+ [ 870    0]]
+C:\Users\bbish\anaconda3\envs\dev\lib\site-packages\sklearn\metrics\_classification.py:1248: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+C:\Users\bbish\anaconda3\envs\dev\lib\site-packages\sklearn\metrics\_classification.py:1248: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+C:\Users\bbish\anaconda3\envs\dev\lib\site-packages\sklearn\metrics\_classification.py:1248: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+              precision    recall  f1-score   support
+
+         0.0       0.73      1.00      0.85      2387
+         1.0       0.00      0.00      0.00       870
+
+    accuracy                           0.73      3257
+   macro avg       0.37      0.50      0.42      3257
+weighted avg       0.54      0.73      0.62      3257
+
+None
+Model: "sequential_2"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+lstm (LSTM)                  (None, 5, 50)             10400
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 5, 50)             20200
+_________________________________________________________________
+lstm_2 (LSTM)                (None, 50)                20200
+_________________________________________________________________
+dense_5 (Dense)              (None, 1)                 51
+=================================================================
+Total params: 50,851
+Trainable params: 50,851
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/50
+123/123 [==============================] - 9s 27ms/step - loss: 0.0729 - val_loss: 0.0439
+Epoch 2/50
+123/123 [==============================] - 2s 15ms/step - loss: 0.0444 - val_loss: 0.0442
+Epoch 3/50
+123/123 [==============================] - 2s 13ms/step - loss: 0.0442 - val_loss: 0.0443
+Epoch 4/50
+123/123 [==============================] - 2s 14ms/step - loss: 0.0444 - val_loss: 0.0563
+Epoch 5/50
+123/123 [==============================] - 2s 14ms/step - loss: 0.0456 - val_loss: 0.0432
+Epoch 6/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0439 - val_loss: 0.0452
+Epoch 7/50
+123/123 [==============================] - 2s 15ms/step - loss: 0.0435 - val_loss: 0.0449
+Epoch 8/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0438 - val_loss: 0.0441
+Epoch 9/50
+123/123 [==============================] - 2s 13ms/step - loss: 0.0434 - val_loss: 0.0431
+Epoch 10/50
+123/123 [==============================] - 2s 16ms/step - loss: 0.0433 - val_loss: 0.0427
+Epoch 11/50
+123/123 [==============================] - 2s 14ms/step - loss: 0.0431 - val_loss: 0.0432
+Epoch 12/50
+123/123 [==============================] - 1s 10ms/step - loss: 0.0434 - val_loss: 0.0436
+Epoch 13/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0431 - val_loss: 0.0437
+Epoch 14/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0428 - val_loss: 0.0427
+Epoch 15/50
+123/123 [==============================] - 1s 11ms/step - loss: 0.0432 - val_loss: 0.0443
+Epoch 16/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0433 - val_loss: 0.0446
+Epoch 17/50
+123/123 [==============================] - 1s 10ms/step - loss: 0.0432 - val_loss: 0.0428
+Epoch 18/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0431 - val_loss: 0.0480
+Epoch 19/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0438 - val_loss: 0.0431
+Epoch 20/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0430 - val_loss: 0.0432
+Epoch 21/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0429 - val_loss: 0.0430
+Epoch 22/50
+123/123 [==============================] - 1s 10ms/step - loss: 0.0431 - val_loss: 0.0431
+Epoch 23/50
+123/123 [==============================] - 1s 11ms/step - loss: 0.0429 - val_loss: 0.0430
+Epoch 24/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0430 - val_loss: 0.0428
+Epoch 25/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0429 - val_loss: 0.0429
+Epoch 26/50
+123/123 [==============================] - 1s 11ms/step - loss: 0.0427 - val_loss: 0.0449
+Epoch 27/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0430 - val_loss: 0.0428
+Epoch 28/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0431 - val_loss: 0.0443
+Epoch 29/50
+123/123 [==============================] - 2s 15ms/step - loss: 0.0429 - val_loss: 0.0431
+Epoch 30/50
+123/123 [==============================] - 2s 12ms/step - loss: 0.0430 - val_loss: 0.0441
+Epoch 31/50
+123/123 [==============================] - 2s 15ms/step - loss: 0.0433 - val_loss: 0.0429
+Epoch 32/50
+123/123 [==============================] - 2s 15ms/step - loss: 0.0430 - val_loss: 0.0436
+Epoch 33/50
+123/123 [==============================] - 2s 15ms/step - loss: 0.0433 - val_loss: 0.0452
+Epoch 34/50
+123/123 [==============================] - 2s 13ms/step - loss: 0.0437 - val_loss: 0.0442
+Epoch 35/50
+123/123 [==============================] - 2s 14ms/step - loss: 0.0427 - val_loss: 0.0428
+Epoch 36/50
+123/123 [==============================] - 2s 14ms/step - loss: 0.0430 - val_loss: 0.0428
+Epoch 37/50
+123/123 [==============================] - 1s 12ms/step - loss: 0.0432 - val_loss: 0.0433
+Epoch 38/50
+123/123 [==============================] - 1s 10ms/step - loss: 0.0429 - val_loss: 0.0436
+Epoch 39/50
+123/123 [==============================] - 1s 10ms/step - loss: 0.0428 - val_loss: 0.0428
+Epoch 40/50
+123/123 [==============================] - 1s 10ms/step - loss: 0.0428 - val_loss: 0.0444
+Epoch 41/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0430 - val_loss: 0.0459
+Epoch 42/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0437 - val_loss: 0.0430
+Epoch 43/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0428 - val_loss: 0.0444
+Epoch 44/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0430 - val_loss: 0.0429
+Epoch 45/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0429 - val_loss: 0.0428
+Epoch 46/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0426 - val_loss: 0.0434
+Epoch 47/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0429 - val_loss: 0.0431
+Epoch 48/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0427 - val_loss: 0.0430
+Epoch 49/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0426 - val_loss: 0.0432
+Epoch 50/50
+123/123 [==============================] - 1s 9ms/step - loss: 0.0429 - val_loss: 0.0427
+RMSE: 0.4323627358943836
+[0.5625879]
+6
+1 price input [0.5        0.5        0.5        0.5        0.56258792]
+1 price output [[0.56861115]]
+2 price input [0.5        0.5        0.5        0.56258792 0.56861115]
+2 price output [[0.5743275]]
+None
+Model Results
+Loss: 0.48208850622177124, Accuracy: 0.7325760126113892
+(dev) 

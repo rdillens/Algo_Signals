@@ -5,6 +5,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler,OneHotEncoder
+from sklearn.metrics import classification_report, confusion_matrix
 import sqlalchemy
 # import h5py
 import hvplot.pandas
@@ -71,7 +72,7 @@ def dataframe(dt_start, dt_end, df):
     nn.add(Dense(units=number_output_neurons, activation="sigmoid"))
 
     # Display the Sequential model summary
-    print(nn.summary())
+    summary = (nn.summary())
 
     # Compile the Sequential model
     nn.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
@@ -83,6 +84,24 @@ def dataframe(dt_start, dt_end, df):
     model_loss, model_accuracy = nn.evaluate(X_test_scaled, y_test, verbose=True)
 
     # Display the model loss and accuracy results
-    print(f"Loss: {model_loss}, Accuracy: {model_accuracy}")
+    # print(f"Loss: {model_loss}, Accuracy: {model_accuracy}")
 
+########################## Remy explaination ###########################
+
+    # y_pred = nn.predict(X_test_scaled)
+
+    # y_pred_df = pd.DataFrame(y_pred)
+    # y_test_df = pd.DataFrame(y_test).reset_index(drop=True)
+
+    # results = pd.concat([y_test_df, y_pred_df], axis=1)
+    # results.rename(columns={'Bullish': 'Actual', 0: 'Predictions'}, inplace=True)
+    # results['Predictions'] = results['Predictions'].apply(lambda x: int(round(x, 0)))
+    # results['Actual'] = results['Actual'].apply(lambda x: int(round(x, 0)))
+
+    # print(results)
+    # print(results['Actual'].value_counts())
+    # print(results['Predictions'].value_counts())
+    # print(confusion_matrix(results['Actual'], results['Predictions']))
+    # print(classification_report(results['Actual'], results['Predictions'], zero_division='warn'))
     
+    return summary, model_loss, model_accuracy
