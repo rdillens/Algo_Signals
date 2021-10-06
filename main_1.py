@@ -70,8 +70,6 @@ def main(ticker=None):
     if(questionary.confirm("Save to database?").ask()):
         df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
-    
-
     mlnn_model_loss, mlnn_model_accuracy = mlnn(df)
     
     dlnn_summary, dlnn_model_loss, dlnn_model_accuracy = dataframe(dt_start, dt_end, df)
@@ -105,6 +103,11 @@ def main(ticker=None):
     print(f"RMSE: {lstm_RMSE}")
     # print(svc_conf_matrix, svc_class_report)
 
+#     print(dataframe_SVC(df))
+#     print(mlnn(df))
+#     print(dataframe(dt_start, dt_end, df))
+#     print(dataframe_SVC(df))
+#     print(lstm_df(df))
     return
 
 if __name__ == "__main__":
