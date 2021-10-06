@@ -95,7 +95,7 @@ def mlnn(df, output_nodes=None):
     results = pd.concat([y_test_df, y_pred_df], axis=1)
     # print(results.head())
     results.rename(columns={'Bullish': 'Actual', 0: 'Predictions'}, inplace=True)
-    results.to_csv(Path('./Resources/results.csv'))
+    # results.to_csv(Path('./Resources/results.csv'))
     results['Predictions'] = results['Predictions'].apply(lambda x: int(round(x, 0)))
     results['Actual'] = results['Actual'].apply(lambda x: int(round(x, 0)))
 
@@ -104,9 +104,10 @@ def mlnn(df, output_nodes=None):
     # print(results)
     # print(results['Actual'].value_counts())
     # print(results['Predictions'].value_counts())
-    print(confusion_matrix(results['Actual'], results['Predictions']))
-    print(classification_report(results['Actual'], results['Predictions'], zero_division='warn'))
-
+    cm = confusion_matrix(results['Actual'], results['Predictions'])
+    print(cm, type(cm))
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr, type(cr))
     return
     
 
@@ -180,8 +181,10 @@ def dlnn(df, output_nodes=None):
     # print(results)
     # print(confusion_matrix(y_test, y_pred))
     # print(classification_report(y_test, y_pred, zero_division='warn'))
-    print(confusion_matrix(results['Actual'], results['Predictions']))
-    print(classification_report(results['Actual'], results['Predictions'], zero_division='warn'))
+    cm = confusion_matrix(results['Actual'], results['Predictions'])
+    print(cm, type(cm))
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr, type(cr))
 
     return
 
@@ -221,7 +224,13 @@ def svc(df):
     results = pd.DataFrame({"Predictions": y_pred, "Actual":y_test}).reset_index(drop=True)
 
     # print(results)
-    print(confusion_matrix(y_test, y_pred))
-    print(classification_report(y_test, y_pred, zero_division='warn'))
+    # print(confusion_matrix(y_test, y_pred))
+    # print(classification_report(y_test, y_pred, zero_division='warn'))
+
+    cm = confusion_matrix(results['Actual'], results['Predictions'])
+    print(cm, type(cm))
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr, type(cr))
+
 
     return 
