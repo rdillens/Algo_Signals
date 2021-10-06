@@ -55,16 +55,17 @@ def input_ticker():
         "What stock ticker should I look up?",
         qmark='',
     ).ask()
-    with shelve.open(shelf_path) as sh:
-        # Check to see if resp exists in shelf
-        if resp not in sh:
-            sh[resp] = {}
-            message = f"Let me add {resp} to my files..."
-        # If resp does not exist, create empty dictionary
-        else:
-            message = f"Ok, let's look at {resp}."
-        print(message)
-        return resp
+    # with shelve.open(shelf_path) as sh:
+    #     # Check to see if resp exists in shelf
+    #     if resp not in sh:
+    #         sh[resp] = {}
+    #         message = f"Let me add {resp} to my files..."
+    #     # If resp does not exist, create empty dictionary
+    #     else:
+    #         message = f"Ok, let's look at {resp}."
+    #     print(message)
+        # return resp
+    return resp
 
 
 def choose_patterns():
