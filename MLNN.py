@@ -1,5 +1,5 @@
 import pandas as pd
-# from pathlib import Path
+from pathlib import Path
 # import tensorflow as tf
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
@@ -82,13 +82,24 @@ def mlnn(df, output_nodes=None):
     print(f"Loss: {model_loss}, Accuracy: {model_accuracy}")
 
     y_pred = nn.predict(X_test_scaled)
+
+    # print(y_test)
+    # print(X_test_scaled)
+    # print(y_pred)
     y_pred_df = pd.DataFrame(y_pred)
+    # print(y_pred_df.head())
     y_test_df = pd.DataFrame(y_test).reset_index(drop=True)
 
+
+
     results = pd.concat([y_test_df, y_pred_df], axis=1)
+    # print(results.head())
     results.rename(columns={'Bullish': 'Actual', 0: 'Predictions'}, inplace=True)
+    results.to_csv(Path('./Resources/results.csv'))
     results['Predictions'] = results['Predictions'].apply(lambda x: int(round(x, 0)))
     results['Actual'] = results['Actual'].apply(lambda x: int(round(x, 0)))
+
+    # print(results.value_counts())
 
     # print(results)
     # print(results['Actual'].value_counts())
