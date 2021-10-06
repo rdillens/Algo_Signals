@@ -87,7 +87,6 @@ def lstm_df(df):
         
     #Calculate RMSE performance metrics - Root Mean Square Error, this is for the data set comparison
     lstm_RMSE = math.sqrt(mean_squared_error(y_train,train_predict))
-    print(f"RMSE: {lstm_RMSE}")
 
 
     # shift train predictions for plotting
@@ -161,3 +160,4 @@ def lstm_df(df):
 
     prediction_df = scaler.inverse_transform(prediction_df).tolist()
 
+    return lstm_RMSE
