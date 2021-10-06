@@ -1,16 +1,16 @@
 import pandas as pd
-from pathlib import Path
+# from pathlib import Path
 # import tensorflow as tf
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler,OneHotEncoder
-import sqlalchemy
+# import sqlalchemy
 # import h5py
 # import hvplot.pandas
 # import bokeh
 # from holoviews.plotting.links import RangeToolLink
-import utils.helpful_functions as hf
+# import utils.helpful_functions as hf
 # from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix
@@ -24,11 +24,10 @@ import math
 from sklearn.metrics import mean_squared_error
 from numpy import array
 import numpy as np
-
+import hvplot.pandas
 
 
 # engine  = sqlalchemy.create_engine(hf.db_connection_string)
-
 # inspector = sqlalchemy.inspect(engine)
 # table_names = inspector.get_table_names()
 
@@ -115,10 +114,17 @@ def mlnn(df, output_nodes=None):
     # print(results['Actual'].value_counts())
     # print(results['Predictions'].value_counts())
     cm = confusion_matrix(results['Actual'], results['Predictions'])
-    print(cm, type(cm))
+    cm_df = pd.DataFrame(cm)
+    print(cm_df)
+
+    # print(cm_df)
     cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
-    print(cr, type(cr))
-    return
+    print(cr)
+
+    cm_df.to_csv('./Resources/mlnn_confusion_matrix.txt')
+    with open('./Resources/mlnn_classification_report.txt', 'w') as f:
+        f.write(cr)    
+    return 
     
 
 def dlnn(df, output_nodes=None):
@@ -192,11 +198,17 @@ def dlnn(df, output_nodes=None):
     # print(confusion_matrix(y_test, y_pred))
     # print(classification_report(y_test, y_pred, zero_division='warn'))
     cm = confusion_matrix(results['Actual'], results['Predictions'])
-    print(cm, type(cm))
-    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
-    print(cr, type(cr))
+    cm_df = pd.DataFrame(cm)
+    print(cm_df)
 
-    return
+    # print(cm_df)
+    cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
+    print(cr)
+
+    cm_df.to_csv('./Resources/dlnn_confusion_matrix.txt')
+    with open('./Resources/dlnn_classification_report.txt', 'w') as f:
+        f.write(cr)    
+    return 
 
 
 def svc(df):
@@ -238,9 +250,16 @@ def svc(df):
     # print(classification_report(y_test, y_pred, zero_division='warn'))
 
     cm = confusion_matrix(results['Actual'], results['Predictions'])
-    print(cm, type(cm))
+    cm_df = pd.DataFrame(cm)
+    print(cm_df)
+
+    # print(cm_df)
     cr = classification_report(results['Actual'], results['Predictions'], zero_division='warn')
-    print(cr, type(cr))
+    print(cr)
+
+    cm_df.to_csv('./Resources/svc_confusion_matrix.csv')
+    with open('./Resources/svc_classification_report.txt', 'w') as f:
+        f.write(cr)    
 
     return 
 
@@ -301,7 +320,7 @@ def lstm(df):
     model.summary()
 
     #Fit the model
-    model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=50,batch_size=64,verbose=True)
+    model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=50,batch_size=64,verbose=0)
 
     #Prediction and Performance Metrics
     train_predict=model.predict(X_train)
@@ -316,7 +335,7 @@ def lstm(df):
 
 
     # shift train predictions for plotting
-    look_back= timesteps #this is your timesteps from earlier
+    look_back = timesteps #this is your timesteps from earlier
     trainPredictPlot = np.empty_like(y_scaled)
     trainPredictPlot[:, :] = np.nan
     trainPredictPlot[look_back:len(train_predict)+look_back, :] = train_predict
