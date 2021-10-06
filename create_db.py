@@ -92,6 +92,12 @@ def main(ticker=None):
     print(MLNN.svc(df))
 
 
+    print(80*'-')
+    print(f"Long Short Term Memory.")
+    MLNN.lstm(df)
+    print(80*'-')
+
+
     return
 
 
