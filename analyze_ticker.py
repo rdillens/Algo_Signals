@@ -55,6 +55,10 @@ def main(ticker=None):
     #     df.to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
 
+    print(80*'-')
+    print(f"Long Short Term Memory.")
+    MLNN.lstm(df)
+    print(80*'-')
 
 
     # print(list(df.columns))
@@ -90,10 +94,6 @@ def main(ticker=None):
     print(80*'-')
     print(MLNN.svc(df))
 
-    print(80*'-')
-    print(f"Long Short Term Memory.")
-    MLNN.lstm(df)
-    print(80*'-')
 
     return
 
