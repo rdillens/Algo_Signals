@@ -17,10 +17,10 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import classification_report
 
-engine  = sqlalchemy.create_engine(hf.db_connection_string)
+# engine  = sqlalchemy.create_engine(hf.db_connection_string)
 
-inspector = sqlalchemy.inspect(engine)
-table_names = inspector.get_table_names()
+# inspector = sqlalchemy.inspect(engine)
+# table_names = inspector.get_table_names()
 
 def mlnn(df, output_nodes=None):
     # Create a list of categorical variables 
