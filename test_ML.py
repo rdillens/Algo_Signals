@@ -16,6 +16,13 @@ df = pd.read_sql_table(ticker + '_Indicators', con=engine, index_col='Datetime')
 # print(df.columns)
 # print(df['Trade Signal'].value_counts())
 
+
+print(80*'-')
+print(f"Long Short Term Memory.")
+MLNN.lstm(df)
+print(80*'-')
+
+
 print(80*'-')
 print(f"Shallow Neural Network: 1 input layer, 1 output layer.")
 print(f"Binary clasifier identifying bullish signals, 0 or 1 only.")
@@ -45,4 +52,5 @@ print(f"Support Vector Classification")
 print(f"Binary clasifier identifying bullish signals, 0 or 1 only.")
 print(80*'-')
 print(MLNN.svc(df))
+
 
