@@ -493,7 +493,8 @@ def add_trade_signals(df):
     df['Trade Signal'] = df['Sum Patterns'].apply(lambda x: check_sum_value(x))
     df.drop(columns='Sum Patterns', inplace=True)
 
-    return df
+    return df.drop(columns=pattern_list)
+    # return df
 
 
 # SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, T3
