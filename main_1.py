@@ -1,7 +1,7 @@
 from DLNN_1 import dataframe
-from LSTM import lstm_df
-from MLNN import mlnn
 from SVC_1 import dataframe_SVC
+from LSTM import lstm_df
+from MLNN_copy import mlnn
 import questionary
 import utils.helpful_functions_1 as hf
 # import shelve
@@ -71,8 +71,8 @@ def main(ticker=None):
     print(dataframe_SVC(df))
     print(mlnn(df))
     print(dataframe(dt_start, dt_end, df))
+    print(dataframe_SVC(df))
     print(lstm_df(df))
-    
     return
 
 if __name__ == "__main__":
