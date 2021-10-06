@@ -35,11 +35,11 @@ def mlnn(df, output_nodes=None):
         columns = enc.get_feature_names(categorical_variables)
     )
     encoded_df.rename(columns={'Trade Signal_-1.0': 'Bearish', 'Trade Signal_0.0': 'None', 'Trade Signal_1.0':'Bullish'}, inplace=True)
-    encoded_df.drop(columns='None', inplace=True)
+    # encoded_df.drop(columns='None', inplace=True)
     
     # Define the features set X and the target set y
     if output_nodes == 2:
-        y = encoded_df[['Bullish', 'Bearish']]
+        y = encoded_df[['Bearish', 'None', 'Bullish']]
     else:
         y = encoded_df['Bullish']
         output_nodes = 1

@@ -493,8 +493,8 @@ def add_trade_signals(df):
     def check_sum_value(sum_value):
         if sum_value > threshold_value:
             return 1
-        # elif sum_value < -threshold_value:
-        #     return -1
+        elif sum_value < -threshold_value:
+            return -1
         else:
             return 0.0
 
