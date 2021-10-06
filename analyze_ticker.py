@@ -94,10 +94,7 @@ def main(ticker=None):
     print(80*'-')
     print(MLNN.svc(df))
 
-
     return
-
-
 
 
 if __name__ == "__main__":

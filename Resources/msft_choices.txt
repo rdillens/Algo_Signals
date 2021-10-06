@@ -1,0 +1,33 @@
+Getting MSFTcandles from 1318190001 to 1633550001
+ Choose a Pattern: Doji
+? Add another pattern? Yes
+ Choose a Pattern: Engulfing Pattern
+? Add another pattern? Yes
+ Choose a Pattern: Gravestone Doji
+? Add another pattern? Yes
+ Choose a Pattern: Harami Pattern
+? Add another pattern? Yes
+ Choose a Pattern: Doji Star
+? Add another pattern? Yes
+ Choose a Pattern: Dragonfly Doji
+? Add another pattern? Yes
+ Choose a Pattern: Kicking
+? Add another pattern? No
+? Add overlap study? Yes
+ Choose a Overlap Study: Bollinger Bands
+? Add another Overlap Study? No
+? Get time period for Bollinger Bands 7
+? Get nbdevup for Bollinger Bands 2
+? Get nbdevdn for Bollinger Bands 2
+ Choose a Moving Average: Simple Moving Average
+SMA
+? Add momentum indicator? Yes
+ Choose a Momentum Indicator: Moving Average Convergence/Divergence  
+? Add another Momentum Indicator? No
+? Get fast time period for MACD 7
+? Get slow time period for MACD 20
+? Get signal period for MACD 7
+? Add volatility indicator? Yes
+ Choose a Volatility Indicator: Average True Range
+? Add another Volatility Indicator? No
+? Get time period for ATR 7
