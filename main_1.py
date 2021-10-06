@@ -68,11 +68,7 @@ def main(ticker=None):
     if(questionary.confirm("Save to database?").ask()):
         df.dropna().to_sql(ticker + '_Indicators', con=engine, if_exists='replace')
     
-    # DLNN
-    # Inspector and engine functions
-    # inspector = sqlalchemy.inspect(engine)
-    # table_names = inspector.get_table_names()
-    # indicators_df = pd.read_sql_table(ticker + '_Indicators', con=engine, index_col='Datetime')
+    print(dataframe_SVC(df))
     print(mlnn(df))
     print(dataframe(dt_start, dt_end, df))
     print(dataframe_SVC(df))
