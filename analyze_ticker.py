@@ -57,7 +57,6 @@ def main(ticker=None):
 
 
 
-
     # print(list(df.columns))
     # print(list(df.dtypes))
     # df = df.drop('Previous Date')
@@ -91,6 +90,10 @@ def main(ticker=None):
     print(80*'-')
     print(MLNN.svc(df))
 
+    print(80*'-')
+    print(f"Long Short Term Memory.")
+    MLNN.lstm(df)
+    print(80*'-')
 
     return
 
