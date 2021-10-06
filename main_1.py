@@ -1,7 +1,7 @@
 from DLNN_1 import dataframe
 from SVC_1 import dataframe_SVC
 from LSTM import lstm_df
-from MLNN import mlnn
+from MLNN_copy import mlnn
 import questionary
 import utils.helpful_functions_1 as hf
 # import shelve
