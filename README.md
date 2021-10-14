@@ -1,38 +1,36 @@
 # **AlgoTrader**
-
-Created by The Four Headless Horseman
-
-*"The AlgoTrader you set and forget."*
+**Created by The Four Headless Horseman**
+> *"The algo-trader you set and forget."*
 
 ---
-
 ## **Executive Summary**
+There are a multitude of trading strategies, indicators, and methods to enter the market in an effective way. We, at The Four Headless Horsemen (T4HH), want to allow you, as a user, to personally select or utilize a pre-selected strategy for our algorithm to make winning trades from your selections. The ideology is that we ultimately want you, as a user, to have full control of trades to match (if not exceed) the market in performance based on your personal preferences, while providing a unique user experience that will ultimately lead to a “Set it and Forget it” trading profile.
 
-We at The Four Headless Horsemen (T4HH) believe that are a multitude of trading strategies, indicators, and methods to enter the market in an effective way. We want to allow you as a user to have a saved profile that will utilize a personally selected or pre-selected strategy for our algorithm to make trades based on your choices and make winning trades off those selections. The ideology is that we  ultimately want you to as a user to have full autonomy of trades to match, if not exceed the market in performance based on their personal preferences, while providing a unique user experience that will ultimately lead to a “Set it and Forget it” trading profile. 
-
+---
 ## **Problems to Solve**
-
-1. Not confident in how trades work in the market, and not having the ability of information to make a trade.
-
-2. Fear of not being right, and not being able to detect trades in an effective manner.
-
-3. Fear of missing out and trying to enter the market during the fad, and losing out on an opportunity to trade.
-
+1. Not confident in how trades work in the market, not having the ability or information to make a trade.
+2. Fear of making the wrong choices, not being able to detect trades in an effective manner.
+3. Fear of missing out and trying to enter the market during the fad, entering the market at the wrong time.
 4. Time to manage and maintain a trading profile confidently, it takes time to do.
 
+---
 ## **Our Objective**
+We want you as a user to be able to select a short term trading strategy utilizing our algorithm and machine learning models to identify and execute winning trades based on your preferences without being managed (headless).
 
-We want you as a user to be able to select a short term trading strategy and utilize  our Algorithm and our Machine Learning Models to identify and trade on winning trades based on your preferences without having to manage it.
-
-## **Models Selection**
-
-For the purposes of this program, we chose 3 models that would be outputted to compare and see what achieves the best accruacy and recall:
+---
+## **Model Selection**
+We chose 4 models and compared their accruacy and recall in predicting market signals based on historical price data:
 
 1. Support Vector Machine (SVM)
-2. Deep Neural Network (DNN)/Neural Network (NN)
-3. Long Short Term Memory (LSTM)
+2. Neural Network (MLNN)
+3. Deep-Learning Neural Network (DLNN)
+4. Long Short Term Memory (LSTM)
 
+---
+## **Our Process**
+[Click here to read more about our project plan](./summary.md)
 
+---
 ## **Technologies Used**
 
 ```python
@@ -62,7 +60,7 @@ import mplfinance as mpf
 ## **Steps to Operate the Program**
 
 1. To initiate the programs please ensure all libraries are included and installed (see above "Technologies Used.")
-2. User must create a ```.env``` file with a finnhub.io api key and save it in the root folder in the following format:
+2. User must create a ```.env``` file with a finnhub api key [(Obtained here)](https://finnhub.io/) and save it in the root folder in the following format:
 ```shell
 FINNHUB_API_KEY="XXXXXXXXXXXXXXXXXXXX"
 ```
@@ -70,23 +68,27 @@ FINNHUB_API_KEY="XXXXXXXXXXXXXXXXXXXX"
 ```shell
 python analyze_ticker.py
 ```
-4. You will be prompted with a question in the CLI asking: What stock ticker should I look up?
-
+4. You will be prompted with a question in the CLI asking: 
+```shell
+What stock ticker should I look up?
+```
 5. Once prompted, input a ticker into the CLI (all caps).
 
-6. Once the stock is selected, you will be prompted with a list of candlestick patterns you are welcome to choose. For more information about various candlestick patterns please check out the following link: https://patternswizard.com/
+6. Once the stock is selected, you will be prompted with a list of candlestick patterns you are welcome to choose. For more information about various candlestick patterns please check out [this link](https://patternswizard.com/)
 
-7. You will be prompted with overlap studies that you are welcome to choose. For more information about overlap studies, please check out the following link: http://www.tadoc.org/index.htm
+7. You will be prompted with overlap studies that you are welcome to choose. For more information about overlap studies, please check out [this link](http://www.tadoc.org/index.htm)
 
-8. You will be prompted with momentum indicators you are welcome to choose. For more information about mometum indicators, please check out the following link: http://www.tadoc.org/index.htm
+8. You will be prompted with momentum indicators you are welcome to choose. For more information about mometum indicators, please check out [this link](http://www.tadoc.org/index.htm)
 
-9. You will be prompted with volatility indicators that you are welcome to choose. For more information about volatility indicators, please check out the following link: http://www.tadoc.org/index.htm 
 
-10. Lastly, you will be prompted if you would like to save to the program database. From there, the 3 models will run and output the results. 
+9. You will be prompted with volatility indicators that you are welcome to choose. For more information about volatility indicators, please check out [this link](http://www.tadoc.org/index.htm)
+ 
+
+10. Lastly, you will be prompted if you would like to save to the program database. From there, the 4 models will run and output the results. 
 
 ## **Contributors**
 
-This program is brought to you by Scott Slusher, Billy Bishop, Remy Dillenseger and Andrew Au
+This program is brought to you by [Andrew Au](https://github.com/AndrewAu42), [Billy Bishop](https://github.com/billybishop21), [Scott Slusher](https://github.com/scottslusher), and Remy Dillenseger.
 
 ## **License**
 
