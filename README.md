@@ -62,24 +62,27 @@ import mplfinance as mpf
 ## **Steps to Operate the Program**
 
 1. To initiate the programs please ensure all libraries are included and installed (see above "Technologies Used.")
+2. User must create a ```.env``` file with a finnhub.io api key and save it in the root folder in the following format:
+```shell
+FINNHUB_API_KEY="XXXXXXXXXXXXXXXXXXXX"
+```
+3. Start the program using a CLI by typing the following:
+```shell
+python analyze_ticker.py
+```
+4. You will be prompted with a question in the CLI asking: What stock ticker should I look up?
 
-2. Start the program using a CLI by typing the following:
+5. Once prompted, input a ticker into the CLI (all caps).
 
-        python analyze_ticker.py
+6. Once the stock is selected, you will be prompted with a list of candlestick patterns you are welcome to choose. For more information about various candlestick patterns please check out the following link: https://patternswizard.com/
 
-3. You will be prompted with a question in the CLI asking: What stock ticker should I look up?
+7. You will be prompted with overlap studies that you are welcome to choose. For more information about overlap studies, please check out the following link: http://www.tadoc.org/index.htm
 
-4. Once prompted, input a ticker into the CLI (all caps).
+8. You will be prompted with momentum indicators you are welcome to choose. For more information about mometum indicators, please check out the following link: http://www.tadoc.org/index.htm
 
-5. Once the stock is selected, you will be prompted with a list of candlestick patterns you are welcome to choose. For more information about various candlestick patterns please check out the following link: https://patternswizard.com/
+9. You will be prompted with volatility indicators that you are welcome to choose. For more information about volatility indicators, please check out the following link: http://www.tadoc.org/index.htm 
 
-6. You will be prompted with overlap studies that you are welcome to choose. For more information about overlap studies, please check out the following link: http://www.tadoc.org/index.htm
-
-7. You will be prompted with momentum indicators you are welcome to choose. For more information about mometum indicators, please check out the following link: http://www.tadoc.org/index.htm
-
-8. You will be prompted with volatility indicators that you are welcome to choose. For more information about volatility indicators, please check out the following link: http://www.tadoc.org/index.htm 
-
-9. Lastly, you will be prompted if you would like to save to the program database. From there, the 3 models will run and output the results. 
+10. Lastly, you will be prompted if you would like to save to the program database. From there, the 3 models will run and output the results. 
 
 ## **Contributors**
 
