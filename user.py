@@ -1,7 +1,7 @@
 import shelve
 import questionary
 import portfolio_builder as pb
-import helpful_methods as hm
+import utils.helpful_functions as hm
 
 def main(display_string=None):
     if display_string is not None:
