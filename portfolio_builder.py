@@ -1,6 +1,6 @@
 import questionary
-import finnhubIO as fh
-import polygonIO as pg
+import utils.finnhubIO as fh
+import utils.polygonIO as pg
 import pandas as pd
 import concurrent.futures
 

@@ -3,8 +3,8 @@ from numpy import save
 import questionary
 import pandas as pd
 # from questionary.constants import DEFAULT_STYLE
-import helpful_methods as hm
-import finnhubIO as fh
+import utils.helpful_functions as hm
+import utils.finnhubIO as fh
 import datetime
 import sqlalchemy
 
