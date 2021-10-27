@@ -1,7 +1,7 @@
-
 # The Four Headless Horseman
+>This program was orignially created by by [Andrew Au](https://github.com/AndrewAu42), [Billy Bishop](https://github.com/billybishop21), [Scott Slusher](https://github.com/scottslusher), and Remy Dillenseger as part of a class project in the Rice FinTech Bootcamp June - November 2021.
 
-
+---
 ## An AlgoTrader that allows the user to build / test / deploy their strategy without needing the coding background necessary to build from scratch
 
 

@@ -1,10 +1,5 @@
 # **AlgoTrader**
-**Created by The Four Headless Horseman**
-> *"The algo-trader you set and forget."*
-
----
-## **Executive Summary**
-There are a multitude of trading strategies, indicators, and methods to enter the market in an effective way. We, at The Four Headless Horsemen (T4HH), want to allow you, as a user, to personally select or utilize a pre-selected strategy for our algorithm to make winning trades from your selections. The ideology is that we ultimately want you, as a user, to have full control of trades to match (if not exceed) the market in performance based on your personal preferences, while providing a unique user experience that will ultimately lead to a “Set it and Forget it” trading profile.
+***Full control of technical indicators to execute winning trades that will ultimately lead to a “Set it and Forget it” trading profile.***
 
 ---
 ## **Problems to Solve**
@@ -14,21 +9,11 @@ There are a multitude of trading strategies, indicators, and methods to enter th
 4. Time to manage and maintain a trading profile confidently, it takes time to do.
 
 ---
-## **Our Objective**
-We want you as a user to be able to select a short term trading strategy utilizing our algorithm and machine learning models to identify and execute winning trades based on your preferences without being managed (headless).
-
----
 ## **Model Selection**
-We chose 4 models and compared their accruacy and recall in predicting market signals based on historical price data:
-
-1. Support Vector Machine (SVM)
-2. Neural Network (MLNN)
-3. Deep-Learning Neural Network (DLNN)
-4. Long Short Term Memory (LSTM)
-
----
-## **Our Process**
-[Click here to read more about our project plan](./summary.md)
+Choose machine learning models and compare their accruacy and recall in predicting market signals based on historical price data
+- Support Vector Machine
+- Deep-Learning Neural Network
+- Long Short Term Memory
 
 ---
 ## **Technologies Used**
@@ -88,7 +73,9 @@ What stock ticker should I look up?
 
 ## **Contributors**
 
-This program is brought to you by [Andrew Au](https://github.com/AndrewAu42), [Billy Bishop](https://github.com/billybishop21), [Scott Slusher](https://github.com/scottslusher), and Remy Dillenseger.
+Created and maintained by Remy Dillenseger.
+
+[More information about the origin of this project can be found here.](./summary.md)
 
 ## **License**
 
