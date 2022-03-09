@@ -1,4 +1,6 @@
 # **AlgoTrader**
+**This software is not intended to be used as financial advice!**
+
 **Created by The Four Headless Horseman**
 > *"The algo-trader you set and forget."*
 
@@ -88,9 +90,15 @@ What stock ticker should I look up?
 
 ## **Contributors**
 
-This program is brought to you by [Andrew Au](https://github.com/AndrewAu42), [Billy Bishop](https://github.com/billybishop21), [Scott Slusher](https://github.com/scottslusher), and Remy Dillenseger.
+This program was originally started as a student project
+-[Andrew Au](https://github.com/AndrewAu42)
+-[Billy Bishop](https://github.com/billybishop21)
+-[Scott Slusher](https://github.com/scottslusher) 
+-Remy Dillenseger
 
 ## **License**
+
+**This software is not intended to be used as financial advice!**
 
 Copyright (c) 2021
 
